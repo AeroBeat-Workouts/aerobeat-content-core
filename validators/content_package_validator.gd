@@ -11,7 +11,7 @@ const ContentValidationResult = preload("res://../validators/content_validation_
 const InteractionFamily = preload("res://../globals/interaction_family.gd")
 const Routine = preload("res://../data_types/routine.gd")
 const Song = preload("res://../data_types/song.gd")
-const ChartVariant = preload("res://../data_types/chart_variant.gd")
+const Chart = preload("res://../data_types/chart.gd")
 const Workout = preload("res://../data_types/workout.gd")
 
 func validate_fixture_package(package_dir: String) -> ContentValidationResult:
@@ -41,7 +41,7 @@ func validate_package_data(package_data: Dictionary) -> ContentValidationResult:
 	_validate_manifest(manifest, result)
 	_validate_records(package_data.get("songs", []), Song, "song", result)
 	_validate_records(package_data.get("routines", []), Routine, "routine", result)
-	_validate_records(package_data.get("charts", []), ChartVariant, "chart", result)
+	_validate_records(package_data.get("charts", []), Chart, "chart", result)
 	_validate_records(package_data.get("workouts", []), Workout, "workout", result)
 	_validate_references(package_data, result)
 	return result

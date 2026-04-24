@@ -1,5 +1,5 @@
 {
-  "schema": "aerobeat.content.chart_variant.v1",
+  "schema": "aerobeat.content.chart.v1",
   "chartId": "chart_demo_boxing_medium",
   "chartName": "Demo Boxing Medium",
   "songId": "song_demo",

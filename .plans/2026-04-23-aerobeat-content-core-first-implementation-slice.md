@@ -126,7 +126,7 @@ Derrick redirected the work to start from the **data shapes first**.
 
 The immediate design focus is:
 
-- define the durable data shapes for `Song`, `Routine`, `Chart Variant`, and `Workout`
+- define the durable data shapes for `Song`, `Routine`, `Chart`, and `Workout`
 - model the workout-creator perspective first
 - derive package authoring/editing/validation responsibilities only after those records are clear
 
@@ -205,7 +205,7 @@ Specific outputs landed so far:
   - consistent `*Id` + `*Name` naming
   - lean `Routine` ownership
   - workout-owned coaching overlays
-- updated `aerobeat-docs/docs/gdd/glossary/terms.md` to replace `Chart Variant` with `Chart`
+- updated `aerobeat-docs/docs/gdd/glossary/terms.md` to align the glossary to canonical `Chart` terminology
 - created draft storage/discovery doc:
   - `aerobeat-docs/docs/architecture/workout-package-storage-and-discovery.md`
 
