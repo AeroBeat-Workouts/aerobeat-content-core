@@ -1,0 +1,9 @@
+{
+  "package_id": "package.minimal_boxing",
+  "schema": "aerobeat.content.content_package_manifest.v1",
+  "version": 1,
+  "songs": ["song.demo"],
+  "routines": ["routine.demo_boxing"],
+  "charts": ["chart.demo_boxing.medium"],
+  "workouts": ["workout.demo"]
+}

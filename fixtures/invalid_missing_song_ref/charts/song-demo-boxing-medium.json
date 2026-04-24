@@ -1,0 +1,11 @@
+{
+  "id": "chart.invalid_boxing.medium",
+  "routine_id": "routine.invalid_boxing",
+  "difficulty": "medium",
+  "interaction_family": "gesture_2d",
+  "chart_envelope": {
+    "schema": "aerobeat.content.chart_variant.v1",
+    "chart_id": "chart.invalid_boxing.medium",
+    "events": []
+  }
+}

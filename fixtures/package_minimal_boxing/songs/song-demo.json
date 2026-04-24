@@ -1,0 +1,9 @@
+{
+  "id": "song.demo",
+  "title": "Demo Boxer",
+  "artist": "AeroBeat Lab",
+  "bpm": 128,
+  "duration_ms": 120000,
+  "audio_asset": "audio/demo-boxer.ogg",
+  "tags": ["demo", "boxing"]
+}

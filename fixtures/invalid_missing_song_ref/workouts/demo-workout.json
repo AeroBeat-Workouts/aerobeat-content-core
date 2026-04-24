@@ -1,0 +1,12 @@
+{
+  "id": "workout.invalid",
+  "title": "Broken Workout",
+  "mode": "boxing",
+  "steps": [
+    {
+      "chart_id": "chart.invalid_boxing.medium",
+      "duration_ms": 90000,
+      "coach_cue": "This package should fail validation because the song is missing."
+    }
+  ]
+}

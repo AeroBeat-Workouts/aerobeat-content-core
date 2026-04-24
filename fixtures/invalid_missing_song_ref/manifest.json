@@ -1,0 +1,9 @@
+{
+  "package_id": "package.invalid_missing_song_ref",
+  "schema": "aerobeat.content.content_package_manifest.v1",
+  "version": 1,
+  "songs": [],
+  "routines": ["routine.invalid_boxing"],
+  "charts": ["chart.invalid_boxing.medium"],
+  "workouts": ["workout.invalid"]
+}

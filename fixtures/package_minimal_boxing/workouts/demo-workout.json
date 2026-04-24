@@ -1,0 +1,12 @@
+{
+  "id": "workout.demo",
+  "title": "Demo Workout",
+  "mode": "boxing",
+  "steps": [
+    {
+      "chart_id": "chart.demo_boxing.medium",
+      "duration_ms": 120000,
+      "coach_cue": "Set your guard and follow the beat."
+    }
+  ]
+}
