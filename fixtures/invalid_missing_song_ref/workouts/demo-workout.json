@@ -1,12 +1,18 @@
 {
-  "id": "workout.invalid",
-  "title": "Broken Workout",
-  "mode": "boxing",
+  "schema": "aerobeat.content.workout.v1",
+  "workoutId": "workout_invalid_boxing",
+  "workoutName": "Broken Boxing Workout",
+  "description": "This package should fail validation only because the referenced song is missing.",
+  "coachId": "coach_demo",
+  "coachName": "Coach Demo",
   "steps": [
     {
-      "chart_id": "chart.invalid_boxing.medium",
-      "duration_ms": 90000,
-      "coach_cue": "This package should fail validation because the song is missing."
+      "stepId": "step_001",
+      "chartId": "chart_invalid_boxing_medium",
+      "songId": "song_missing",
+      "coachingOverlay": {
+        "beforeClip": "media/coaching/missing-song-warning.mp4"
+      }
     }
   ]
 }

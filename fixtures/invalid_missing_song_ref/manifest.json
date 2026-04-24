@@ -4,10 +4,12 @@
   "packageVersion": "0.1.0",
   "songs": [],
   "routines": [
-    {"path": "routines/song-missing-boxing.json"}
+    {"path": "routines/song-demo-boxing.json"}
   ],
   "charts": [
-    {"path": "charts/song-missing-boxing-medium.json"}
+    {"path": "charts/song-demo-boxing-medium.json"}
   ],
-  "workouts": []
+  "workouts": [
+    {"path": "workouts/demo-workout.json"}
+  ]
 }

@@ -1,7 +1,10 @@
 {
-  "id": "routine.invalid_boxing",
-  "song_id": "song.missing",
+  "schema": "aerobeat.content.routine.v1",
+  "routineId": "routine_invalid_boxing",
+  "routineName": "Broken Boxing Routine",
+  "songId": "song_missing",
   "mode": "boxing",
-  "title": "Broken Routine",
-  "tags": ["broken"]
+  "authorId": "coach_demo",
+  "authorName": "Coach Demo",
+  "charts": ["chart_invalid_boxing_medium"]
 }
