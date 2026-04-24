@@ -1,0 +1,16 @@
+{
+  "schema": "aerobeat.content.workout.v1",
+  "workoutId": "workout_invalid_song_mismatch",
+  "workoutName": "Broken Workout Song Mismatch",
+  "description": "Workout step points at a real chart but declares the wrong song.",
+  "coachId": "coach_demo",
+  "coachName": "Coach Demo",
+  "steps": [
+    {
+      "stepId": "step_001",
+      "chartId": "chart_demo_boxing_medium",
+      "songId": "song_other",
+      "routineId": "routine_demo_boxing"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "aerobeat.content.song.v1",
+  "songId": "song_demo",
+  "songName": "Demo Song",
+  "durationSec": 180,
+  "audio": {
+    "resourcePath": "audio/demo-song.ogg"
+  },
+  "metadata": {
+    "artistName": "AeroBeat",
+    "tags": ["demo", "boxing"]
+  }
+}

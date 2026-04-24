@@ -1,0 +1,18 @@
+{
+  "schema": "aerobeat.content.package_manifest.v1",
+  "packageId": "pkg_invalid_workout_song_mismatch",
+  "packageVersion": "0.1.0",
+  "songs": [
+    {"path": "songs/song-demo.json"},
+    {"path": "songs/song-other.json"}
+  ],
+  "routines": [
+    {"path": "routines/song-demo-boxing.json"}
+  ],
+  "charts": [
+    {"path": "charts/song-demo-boxing-medium.json"}
+  ],
+  "workouts": [
+    {"path": "workouts/demo-workout.json"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "aerobeat.content.workout.v1",
+  "workoutId": "workout_invalid_duplicate_steps",
+  "workoutName": "Broken Duplicate Step Ids",
+  "description": "Workout uses the same stepId twice.",
+  "coachId": "coach_demo",
+  "coachName": "Coach Demo",
+  "steps": [
+    {
+      "stepId": "step_dup",
+      "chartId": "chart_demo_boxing_medium",
+      "songId": "song_demo",
+      "routineId": "routine_demo_boxing"
+    },
+    {
+      "stepId": "step_dup",
+      "chartId": "chart_demo_boxing_medium",
+      "songId": "song_demo",
+      "routineId": "routine_demo_boxing"
+    }
+  ]
+}

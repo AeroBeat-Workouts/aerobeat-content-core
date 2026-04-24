@@ -1,0 +1,10 @@
+{
+  "schema": "aerobeat.content.routine.v1",
+  "routineId": "routine_demo_boxing",
+  "routineName": "Demo Boxing Routine",
+  "songId": "song_demo",
+  "mode": "boxing",
+  "authorId": "coach_demo",
+  "authorName": "Coach Demo",
+  "charts": ["chart_demo_boxing_medium"]
+}

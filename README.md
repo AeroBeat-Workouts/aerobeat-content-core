@@ -14,9 +14,18 @@ This repo now carries the first contract-focused implementation slice described 
 - `data_types/` for the core durable records and supporting ids/references/query shapes
 - `validators/` for shared structural validation result types plus a minimal package validator
 - `globals/` for stable schema ids, content modes, difficulty vocabulary, and interaction families
-- `fixtures/` for one valid minimal boxing package and one intentionally broken reference package
-- `tests/` for contract checks that exercise manifest validation, missing-reference detection, and workout-resolution semantics
+- `fixtures/` for valid and intentionally broken packages used by contract tests
+- `tests/` for contract checks that exercise manifest validation, reference detection, workout-step validation, and workout-resolution semantics
 - `.testbed/` for a tiny Godot headless project used to run the contract suite without pulling in editor UX or runtime visuals
+
+## Workout contract slice
+
+Workouts now treat `steps` as a first-class contract instead of an opaque blob.
+
+- `data_types/workout_step.gd` defines authored workout-step requirements: `stepId` and `chartId` are required, with constrained optional references like `songId` and `routineId`
+- `data_types/resolved_workout_step.gd` defines the canonical resolved shape: `stepId`, `chartId`, `songId`, `routineId`, `mode`, and `difficulty`
+- `interfaces/workout_resolution.gd` documents that resolved workouts preserve authored step order and produce structurally legal step payloads using package-local content only
+- `validators/content_package_validator.gd` now verifies workout-step legality from package content alone, including step required fields, unique `stepId`s per workout, chart existence, and optional `songId` / `routineId` consistency with the referenced chart
 
 ## Current scope
 

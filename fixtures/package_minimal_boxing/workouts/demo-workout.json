@@ -11,6 +11,7 @@
       "stepId": "step_001",
       "chartId": "chart_demo_boxing_medium",
       "songId": "song_demo",
+      "routineId": "routine_demo_boxing",
       "coachingOverlay": {
         "beforeClip": "media/coaching/warmup-intro.mp4"
       }

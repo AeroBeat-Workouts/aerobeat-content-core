@@ -1,0 +1,13 @@
+{
+  "schema": "aerobeat.content.song.v1",
+  "songId": "song_other",
+  "songName": "Other Song",
+  "durationSec": 200,
+  "audio": {
+    "resourcePath": "audio/other-song.ogg"
+  },
+  "metadata": {
+    "artistName": "AeroBeat",
+    "tags": ["test"]
+  }
+}

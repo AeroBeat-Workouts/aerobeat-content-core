@@ -83,6 +83,15 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 				path,
 				{"kind": kind}
 			))
+		if kind == "workout":
+			for issue in Workout.validate_steps_shape(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "workout_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Workout contract issue.")),
+					_path_with_step_context(path, issue),
+					_workout_issue_reference(issue)
+				))
 		var schema_id := String(data.get("schema", ""))
 		if not AeroContentSchema.is_known_record_schema(schema_id):
 			result.add_issue(ContentValidationIssue.create(
@@ -185,15 +194,75 @@ func _validate_references(package_data: Dictionary, result: ContentValidationRes
 			))
 	for workout_record in package_data.get("workouts", []):
 		var workout: Dictionary = workout_record.get("data", {})
-		for step in workout.get("steps", []):
-			if not charts_by_id.has(String(step.get("chartId", ""))):
+		_validate_workout_steps(
+			workout,
+			String(workout_record.get("path", "")),
+			charts_by_id,
+			result
+		)
+
+func _validate_workout_steps(workout: Dictionary, workout_path: String, charts_by_id: Dictionary, result: ContentValidationResult) -> void:
+	var steps_value: Variant = workout.get("steps", [])
+	if not (steps_value is Array):
+		return
+	var seen_step_ids: Dictionary = {}
+	for index in range(steps_value.size()):
+		var step_value: Variant = steps_value[index]
+		if not (step_value is Dictionary):
+			continue
+		var step: Dictionary = step_value
+		var step_path := _step_path(workout_path, index, step)
+		var step_id := String(step.get("stepId", ""))
+		if not step_id.is_empty():
+			if seen_step_ids.has(step_id):
 				result.add_issue(ContentValidationIssue.create(
-					"missing_chart_ref",
+					"duplicate_workout_step_id",
 					ContentValidationIssue.SEVERITY_ERROR,
-					"Workout step references a chartId that is not present in the package.",
-					String(workout_record.get("path", "")),
-					{"chartId": step.get("chartId", "")}
+					"Workout stepId '%s' must be unique within a workout." % step_id,
+					step_path,
+					{"stepId": step_id, "workoutId": String(workout.get("workoutId", ""))}
 				))
+			else:
+				seen_step_ids[step_id] = index
+		var chart_id := String(step.get("chartId", ""))
+		if chart_id.is_empty():
+			continue
+		if not charts_by_id.has(chart_id):
+			result.add_issue(ContentValidationIssue.create(
+				"missing_chart_ref",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Workout step references a chartId that is not present in the package.",
+				step_path,
+				{"chartId": chart_id, "stepId": step_id}
+			))
+			continue
+		var chart: Dictionary = charts_by_id[chart_id].get("data", {})
+		if step.has("songId") and String(step.get("songId", "")) != String(chart.get("songId", "")):
+			result.add_issue(ContentValidationIssue.create(
+				"workout_step_song_mismatch",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Workout step songId must match the referenced chart songId.",
+				step_path,
+				{
+					"stepId": step_id,
+					"chartId": chart_id,
+					"songId": step.get("songId", ""),
+					"expectedSongId": chart.get("songId", ""),
+				}
+			))
+		if step.has("routineId") and String(step.get("routineId", "")) != String(chart.get("routineId", "")):
+			result.add_issue(ContentValidationIssue.create(
+				"workout_step_routine_mismatch",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Workout step routineId must match the referenced chart routineId.",
+				step_path,
+				{
+					"stepId": step_id,
+					"chartId": chart_id,
+					"routineId": step.get("routineId", ""),
+					"expectedRoutineId": chart.get("routineId", ""),
+				}
+			))
 
 func _load_records(package_dir: String, manifest_entries: Array) -> Array[Dictionary]:
 	var records: Array[Dictionary] = []
@@ -236,3 +305,23 @@ func _id_key_for_kind(kind: String) -> String:
 			return "workoutId"
 		_:
 			return "id"
+
+func _path_with_step_context(path: String, issue: Dictionary) -> String:
+	return _step_path(path, int(issue.get("index", -1)), {"stepId": issue.get("stepId", "")})
+
+func _workout_issue_reference(issue: Dictionary) -> Dictionary:
+	var reference: Dictionary = {}
+	if issue.has("field"):
+		reference["field"] = issue.get("field")
+	if issue.has("index"):
+		reference["stepIndex"] = issue.get("index")
+	if issue.has("stepId"):
+		reference["stepId"] = issue.get("stepId")
+	return reference
+
+func _step_path(workout_path: String, index: int, step: Dictionary) -> String:
+	var suffix := "steps[%d]" % index
+	var step_id := String(step.get("stepId", ""))
+	if not step_id.is_empty():
+		suffix += "(%s)" % step_id
+	return "%s#%s" % [workout_path, suffix]
