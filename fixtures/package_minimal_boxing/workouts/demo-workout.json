@@ -1,12 +1,19 @@
 {
-  "id": "workout.demo",
-  "title": "Demo Workout",
-  "mode": "boxing",
+  "schema": "aerobeat.content.workout.v1",
+  "workoutId": "workout_demo_boxing",
+  "workoutName": "Demo Boxing Workout",
+  "description": "Minimal end-to-end fixture for content-core contract tests.",
+  "coachId": "coach_demo",
+  "coachName": "Coach Demo",
+  "defaultBackgroundSceneId": "scene_demo_gym",
   "steps": [
     {
-      "chart_id": "chart.demo_boxing.medium",
-      "duration_ms": 120000,
-      "coach_cue": "Set your guard and follow the beat."
+      "stepId": "step_001",
+      "chartId": "chart_demo_boxing_medium",
+      "songId": "song_demo",
+      "coachingOverlay": {
+        "beforeClip": "media/coaching/warmup-intro.mp4"
+      }
     }
   ]
 }

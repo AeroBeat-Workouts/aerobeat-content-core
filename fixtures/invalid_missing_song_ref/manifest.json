@@ -1,9 +1,13 @@
 {
-  "package_id": "package.invalid_missing_song_ref",
-  "schema": "aerobeat.content.content_package_manifest.v1",
-  "version": 1,
+  "schema": "aerobeat.content.package_manifest.v1",
+  "packageId": "pkg_invalid_missing_song",
+  "packageVersion": "0.1.0",
   "songs": [],
-  "routines": ["routine.invalid_boxing"],
-  "charts": ["chart.invalid_boxing.medium"],
-  "workouts": ["workout.invalid"]
+  "routines": [
+    {"path": "routines/song-missing-boxing.json"}
+  ],
+  "charts": [
+    {"path": "charts/song-missing-boxing-medium.json"}
+  ],
+  "workouts": []
 }

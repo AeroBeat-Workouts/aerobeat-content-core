@@ -1,27 +1,25 @@
 class_name ContentReference
 extends RefCounted
 
-var kind: String
-var id: String
-var package_id: String
-var path: String
+const ContentId = preload("res://../data_types/content_id.gd")
 
-func _init(p_kind: String = "", p_id: String = "", p_package_id: String = "", p_path: String = "") -> void:
-	kind = p_kind
-	id = p_id
-	package_id = p_package_id
-	path = p_path
+var kind: String = ""
+var id: String = ""
+var package_id: String = ""
 
-func key() -> String:
-	return "%s:%s" % [kind, id]
-
-func is_valid() -> bool:
-	return kind != "" and id != ""
+static func from_dict(data: Dictionary) -> ContentReference:
+	var reference := ContentReference.new()
+	reference.kind = String(data.get("kind", ""))
+	reference.id = String(data.get("id", ""))
+	reference.package_id = String(data.get("packageId", ""))
+	return reference
 
 func to_dict() -> Dictionary:
 	return {
 		"kind": kind,
 		"id": id,
-		"package_id": package_id,
-		"path": path,
+		"packageId": package_id,
 	}
+
+func is_valid() -> bool:
+	return not kind.is_empty() and ContentId.is_valid_uid(id)

@@ -1,21 +1,22 @@
 class_name ChartEnvelope
 extends RefCounted
 
-var schema: String
-var chart_id: String
-var event_count: int
-var events: Array[Dictionary]
+const REQUIRED_FIELDS := [
+	"schema",
+	"chartId",
+	"chartName",
+	"songId",
+	"routineId",
+	"mode",
+	"difficulty",
+	"interactionFamily",
+	"timing",
+	"events",
+]
 
-func _init(data: Dictionary = {}) -> void:
-	schema = data.get("schema", "")
-	chart_id = data.get("chart_id", "")
-	events = Array(data.get("events", []), TYPE_DICTIONARY, "", null)
-	event_count = events.size()
-
-func to_dict() -> Dictionary:
-	return {
-		"schema": schema,
-		"chart_id": chart_id,
-		"event_count": event_count,
-		"events": events,
-	}
+static func validate_shape(data: Dictionary) -> Array[String]:
+	var missing: Array[String] = []
+	for field in REQUIRED_FIELDS:
+		if not data.has(field):
+			missing.append(field)
+	return missing

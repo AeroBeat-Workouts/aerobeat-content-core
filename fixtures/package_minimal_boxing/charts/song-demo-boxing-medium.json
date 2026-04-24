@@ -1,14 +1,21 @@
 {
-  "id": "chart.demo_boxing.medium",
-  "routine_id": "routine.demo_boxing",
+  "schema": "aerobeat.content.chart_variant.v1",
+  "chartId": "chart_demo_boxing_medium",
+  "chartName": "Demo Boxing Medium",
+  "songId": "song_demo",
+  "routineId": "routine_demo_boxing",
+  "mode": "boxing",
   "difficulty": "medium",
-  "interaction_family": "gesture_2d",
-  "chart_envelope": {
-    "schema": "aerobeat.content.chart_variant.v1",
-    "chart_id": "chart.demo_boxing.medium",
-    "events": [
-      {"time_ms": 500, "lane": "left_jab", "action": "strike"},
-      {"time_ms": 1100, "lane": "right_cross", "action": "strike"}
-    ]
+  "interactionFamily": "gesture_2d",
+  "timing": {
+    "resolution": 16,
+    "beatOffset": 0
+  },
+  "events": [
+    {"beat": 1, "type": "jab_left"},
+    {"beat": 2, "type": "cross_right"}
+  ],
+  "presentation": {
+    "preferredViews": ["portal"]
   }
 }

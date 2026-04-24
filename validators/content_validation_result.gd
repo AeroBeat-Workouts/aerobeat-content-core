@@ -1,31 +1,24 @@
 class_name ContentValidationResult
 extends RefCounted
 
-const ContentValidationIssue = preload("res://../validators/content_validation_issue.gd")
+var issues: Array[Dictionary] = []
 
-var issues: Array[ContentValidationIssue] = []
-
-func add_issue(issue: ContentValidationIssue) -> void:
+func add_issue(issue: Dictionary) -> void:
 	issues.append(issue)
 
+func merge(other: ContentValidationResult) -> void:
+	for issue in other.issues:
+		issues.append(issue)
+
 func is_valid() -> bool:
-	for issue in issues:
-		if issue.severity == ContentValidationIssue.SEVERITY_ERROR:
-			return false
-	return true
+	return issues.is_empty()
 
 func error_count() -> int:
-	var count := 0
-	for issue in issues:
-		if issue.severity == ContentValidationIssue.SEVERITY_ERROR:
-			count += 1
-	return count
+	return issues.size()
 
 func to_dict() -> Dictionary:
-	var serialized: Array[Dictionary] = []
-	for issue in issues:
-		serialized.append(issue.to_dict())
 	return {
 		"valid": is_valid(),
-		"issues": serialized,
+		"issueCount": error_count(),
+		"issues": issues,
 	}

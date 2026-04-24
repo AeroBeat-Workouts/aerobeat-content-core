@@ -1,9 +1,9 @@
 class_name ContentMigration
 extends RefCounted
 
-func can_migrate(_schema_id: String, _target_version: int) -> bool:
+func can_migrate(_schema_id: String, _target_schema_id: String) -> bool:
 	return false
 
-func migrate(_document: Dictionary, _target_version: int) -> Dictionary:
-	push_error("ContentMigration.migrate must be implemented by an adapter.")
+func migrate_record(_record: Dictionary, _target_schema_id: String) -> Dictionary:
+	push_error("ContentMigration.migrate_record must be implemented by a consumer.")
 	return {}

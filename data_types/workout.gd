@@ -1,21 +1,11 @@
 class_name Workout
 extends RefCounted
 
-var id: String
-var title: String
-var mode: String
-var steps: Array[Dictionary]
+const REQUIRED_FIELDS := ["schema", "workoutId", "workoutName", "description", "coachId", "coachName", "steps"]
 
-func _init(data: Dictionary = {}) -> void:
-	id = data.get("id", "")
-	title = data.get("title", "")
-	mode = data.get("mode", "")
-	steps = Array(data.get("steps", []), TYPE_DICTIONARY, "", null)
-
-func to_dict() -> Dictionary:
-	return {
-		"id": id,
-		"title": title,
-		"mode": mode,
-		"steps": steps,
-	}
+static func validate_shape(data: Dictionary) -> Array[String]:
+	var missing: Array[String] = []
+	for field in REQUIRED_FIELDS:
+		if not data.has(field):
+			missing.append(field)
+	return missing

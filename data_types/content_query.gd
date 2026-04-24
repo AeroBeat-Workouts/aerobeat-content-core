@@ -1,21 +1,17 @@
 class_name ContentQuery
 extends RefCounted
 
-var kind: String
-var mode: String
-var tags: Array[String]
-var difficulty: String
-
-func _init(p_kind: String = "", p_mode: String = "", p_tags: Array[String] = [], p_difficulty: String = "") -> void:
-	kind = p_kind
-	mode = p_mode
-	tags = p_tags.duplicate()
-	difficulty = p_difficulty
+var kinds: PackedStringArray = []
+var ids: PackedStringArray = []
+var mode: String = ""
+var difficulty: String = ""
+var tags: PackedStringArray = []
 
 func to_dict() -> Dictionary:
 	return {
-		"kind": kind,
+		"kinds": Array(kinds),
+		"ids": Array(ids),
 		"mode": mode,
-		"tags": tags,
 		"difficulty": difficulty,
+		"tags": Array(tags),
 	}

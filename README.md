@@ -1,38 +1,48 @@
 # aerobeat-content-core
 
-Canonical AeroBeat authored-content contracts, fixtures, and validation surfaces.
+Canonical AeroBeat authored-content contracts, including songs, routines, chart slices, workouts, shared chart-envelope types, and content loading or validation interfaces.
 
 ## Architecture role
 
-`aerobeat-content-core` is the lane owner for durable authored-content contracts. It defines the reusable content model that feature repos, tools, tests, and packaging flows consume, while keeping mode-specific runtime behavior and authoring UX out of the content lane.
+`aerobeat-content-core` is the lane owner for durable authored-content contracts. It defines the reusable content model that feature repos consume, while keeping mode-specific runtime behavior out of the content lane.
 
 ## Day-one scaffold
 
-This repository now provides a minimal but real contract-first scaffold organized around the approved content repo shape:
+This repo now carries the first contract-focused implementation slice described in `aerobeat-docs/docs/architecture/content-repo-shapes.md`:
 
-- `interfaces/` defines chart loading, registry lookup, migration, and workout-resolution contracts.
-- `data_types/` defines stable record types for songs, routines, chart variants, workouts, manifests, ids, references, and queries.
-- `validators/` contains shared validation report types plus a package validator that can sanity-check the included fixtures.
-- `globals/` holds schema ids and shared vocabulary such as content modes, difficulties, and interaction families.
-- `fixtures/` provides one valid package and one intentionally invalid package for regression coverage.
-- `tests/` documents the intended contract behavior for manifests, references, and workout resolution.
+- `interfaces/` for loader, registry, migration, and workout-resolution contracts
+- `data_types/` for the core durable records and supporting ids/references/query shapes
+- `validators/` for shared structural validation result types plus a minimal package validator
+- `globals/` for stable schema ids, content modes, difficulty vocabulary, and interaction families
+- `fixtures/` for one valid minimal boxing package and one intentionally broken reference package
+- `tests/` for contract checks that exercise manifest validation, missing-reference detection, and workout-resolution semantics
+- `.testbed/` for a tiny Godot headless project used to run the contract suite without pulling in editor UX or runtime visuals
 
-## Repository boundary
+## Current scope
 
-This repo should own:
+This scaffold is intentionally dependency-light and contract-focused. It is meant to answer:
 
-- canonical authored-content records
-- schema/version ids and package manifest contracts
-- reference/query primitives and shared validation interfaces
-- contract fixtures and tests that prove the shared content language
+- what fields make up valid content-lane records
+- what basic shared enums/constants are canonical
+- what package/reference checks are shared across tools and runtime
+- what a tiny end-to-end content package looks like on day one
 
-This repo should not own:
+It intentionally does **not** own:
 
-- gameplay scoring or runtime spawning logic
-- feature-local semantic validation
-- editor UX, CLI presentation, or hosted content services
-- renderers, scenes, or other presentation-heavy runtime systems
+- editor UX
+- CLI command parsing
+- runtime rendering or scoring systems
+- mode-specific semantic gameplay validation
+- import/export workflow state
 
-## Intended consumers
+## Validation
 
-Feature repos, tooling, and assemblies should depend on this repo when they need shared authored-content types, validation surfaces, or package fixtures that define what valid AeroBeat content looks like.
+Run the current headless contract suite with:
+
+```bash
+godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
+```
+
+## Repository status
+
+This repo is the canonical home for shared content-lane contracts in the six-core AeroBeat architecture. Keep the contract surface focused on durable content definitions and validation interfaces instead of drifting into gameplay logic or asset ownership.

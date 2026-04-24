@@ -1,23 +1,22 @@
 extends RefCounted
 
-const ContentPackageManifest = preload("res://../data_types/content_package_manifest.gd")
-const AeroContentSchema = preload("res://../globals/aero_content_schema.gd")
+const ContentPackageValidator = preload("res://../validators/content_package_validator.gd")
 
 static func run() -> Dictionary:
-	var manifest := ContentPackageManifest.new({
-		"package_id": "package.minimal_boxing",
-		"schema": AeroContentSchema.package_schema_id(),
-		"version": AeroContentSchema.VERSION,
-		"songs": ["song.demo"],
-		"routines": ["routine.demo_boxing"],
-		"charts": ["chart.demo_boxing.medium"],
-		"workouts": ["workout.demo"],
-	})
-	assert(manifest.package_id == "package.minimal_boxing")
-	assert(manifest.schema == "aerobeat.content.content_package_manifest.v1")
-	assert(manifest.workouts.size() == 1)
+	var validator := ContentPackageValidator.new()
+	var fixture_path := ProjectSettings.globalize_path("res://../fixtures/package_minimal_boxing")
+	var result := validator.validate_fixture_package(fixture_path)
+	if not result.is_valid():
+		return {
+			"name": "content_manifest_contract",
+			"passed": false,
+			"details": result.to_dict(),
+		}
 	return {
-		"name": "test_content_manifest_contract",
+		"name": "content_manifest_contract",
 		"passed": true,
-		"details": manifest.to_dict(),
+		"details": {
+			"issues": [],
+			"fixture": fixture_path,
+		},
 	}

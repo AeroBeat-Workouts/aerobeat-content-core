@@ -14,7 +14,7 @@ func _initialize() -> void:
 		results.append(test_result)
 		if not bool(test_result.get("passed", false)):
 			has_failures = true
-	var summary := {
+	var summary: Dictionary = {
 		"passed": not has_failures,
 		"results": results,
 	}

@@ -1,12 +1,6 @@
 {
-  // Day-one addon metadata for tooling and workspace discovery.
-  "addons": [
-    {
-      "id": "aerobeat.content_core",
-      "name": "AeroBeat Content Core",
-      "version": "0.1.0",
-      "plugin_cfg": "res://plugin.cfg",
-      "description": "Canonical authored-content contracts, validators, and fixtures."
-    }
-  ]
+  "$schema": "https://chickensoft.games/schemas/addons.schema.json",
+  "addons": {
+    // Day-one scaffold intentionally stays dependency-light.
+  }
 }

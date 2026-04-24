@@ -1,16 +1,22 @@
 class_name AeroContentSchema
 extends RefCounted
 
-const FAMILY := "aerobeat.content"
-const VERSION := 1
-const MANIFEST_TYPE := "content_package_manifest"
-const SONG_TYPE := "song"
-const ROUTINE_TYPE := "routine"
-const CHART_TYPE := "chart_variant"
-const WORKOUT_TYPE := "workout"
+const PACKAGE_MANIFEST_V1: String = "aerobeat.content.package_manifest.v1"
+const SONG_V1: String = "aerobeat.content.song.v1"
+const ROUTINE_V1: String = "aerobeat.content.routine.v1"
+const CHART_VARIANT_V1: String = "aerobeat.content.chart_variant.v1"
+const WORKOUT_V1: String = "aerobeat.content.workout.v1"
 
-static func schema_id(type_name: String) -> String:
-	return "%s.%s.v%d" % [FAMILY, type_name, VERSION]
+const KNOWN_SCHEMAS := {
+	PACKAGE_MANIFEST_V1: true,
+	SONG_V1: true,
+	ROUTINE_V1: true,
+	CHART_VARIANT_V1: true,
+	WORKOUT_V1: true,
+}
 
-static func package_schema_id() -> String:
-	return schema_id(MANIFEST_TYPE)
+static func is_known_schema(schema_id: String) -> bool:
+	return KNOWN_SCHEMAS.has(schema_id)
+
+static func is_known_record_schema(schema_id: String) -> bool:
+	return schema_id in [SONG_V1, ROUTINE_V1, CHART_VARIANT_V1, WORKOUT_V1]

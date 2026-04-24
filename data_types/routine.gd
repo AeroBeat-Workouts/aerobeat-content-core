@@ -1,24 +1,11 @@
 class_name Routine
 extends RefCounted
 
-var id: String
-var song_id: String
-var mode: String
-var title: String
-var tags: Array[String]
+const REQUIRED_FIELDS := ["schema", "routineId", "routineName", "songId", "mode", "authorId", "authorName", "charts"]
 
-func _init(data: Dictionary = {}) -> void:
-	id = data.get("id", "")
-	song_id = data.get("song_id", "")
-	mode = data.get("mode", "")
-	title = data.get("title", "")
-	tags = Array(data.get("tags", []), TYPE_STRING, "", null)
-
-func to_dict() -> Dictionary:
-	return {
-		"id": id,
-		"song_id": song_id,
-		"mode": mode,
-		"title": title,
-		"tags": tags,
-	}
+static func validate_shape(data: Dictionary) -> Array[String]:
+	var missing: Array[String] = []
+	for field in REQUIRED_FIELDS:
+		if not data.has(field):
+			missing.append(field)
+	return missing
