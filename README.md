@@ -1,6 +1,6 @@
 # aerobeat-content-core
 
-Canonical AeroBeat authored-content contracts, including songs, routines, chart slices, workouts, shared chart-envelope types, and content loading or validation interfaces.
+Canonical AeroBeat authored-content contracts, including Songs, Charts, Sets, Workouts, shared chart-envelope types, and content loading or validation interfaces.
 
 ## Architecture role
 
@@ -15,17 +15,19 @@ This repo now carries the first contract-focused implementation slice described 
 - `validators/` for shared structural validation result types plus a minimal package validator
 - `globals/` for stable schema ids, content modes, difficulty vocabulary, and interaction families
 - `fixtures/` for valid and intentionally broken packages used by contract tests
-- `tests/` for contract checks that exercise manifest validation, reference detection, workout-step validation, and workout-resolution semantics
+- `tests/` for contract checks that exercise manifest validation, set/workout reference detection, and workout-resolution semantics
 - `.testbed/` for a tiny Godot headless project used to run the contract suite without pulling in editor UX or runtime visuals
 
 ## Workout contract slice
 
-Workouts now treat `steps` as a first-class contract instead of an opaque blob.
+The durable content model is **Song → Chart → Set → Workout**. Sets are the single package-local linker between reusable songs/charts and workout sequencing.
 
-- `data_types/workout_step.gd` defines authored workout-step requirements: `stepId` and `chartId` are required, with constrained optional references like `songId` and `routineId`
-- `data_types/resolved_workout_step.gd` defines the canonical resolved shape: `stepId`, `chartId`, `songId`, `routineId`, `mode`, and `difficulty`
-- `interfaces/workout_resolution.gd` documents that resolved workouts preserve authored step order and produce structurally legal step payloads using package-local content only
-- `validators/content_package_validator.gd` now verifies workout-step legality from package content alone, including step required fields, unique `stepId`s per workout, chart existence, and optional `songId` / `routineId` consistency with the referenced chart
+Current docs for this repo should be read through that durable model:
+
+- charts carry shared chart-envelope fields plus mode-specific event payloads
+- sets own the exact song/chart pairing and package-local composition choices
+- workouts assemble ordered set selections into a session
+- validation and resolution interfaces should be interpreted as package-local composition and workout sequencing helpers inside the set-centered model
 
 ## Current scope
 
@@ -34,7 +36,7 @@ This scaffold is intentionally dependency-light and contract-focused. It is mean
 - what fields make up valid content-lane records
 - what basic shared enums/constants are canonical
 - what package/reference checks are shared across tools and runtime
-- what a tiny end-to-end content package looks like on day one
+- what a tiny end-to-end content package looks like on day one under the set-centered model
 
 It intentionally does **not** own:
 
