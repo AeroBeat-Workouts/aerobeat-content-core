@@ -94,13 +94,24 @@ static func _validate_stop_segments(timing: Dictionary) -> Array[Dictionary]:
 		})
 		return issues
 	for index in range(segments_value.size()):
-		if not (segments_value[index] is Dictionary):
+		var segment_value: Variant = segments_value[index]
+		if not (segment_value is Dictionary):
 			issues.append({
 				"code": "song_stop_segment_invalid_type",
 				"message": "Song stop segment entries must be dictionaries.",
 				"field": "timing.stopSegments[%d]" % index,
 				"index": index,
 			})
+			continue
+		var segment: Dictionary = segment_value
+		for field in ["startBeat", "durationMs"]:
+			if not segment.has(field):
+				issues.append({
+					"code": "song_stop_segment_missing_field",
+					"message": "Song stop segment is missing required field '%s'." % field,
+					"field": "timing.stopSegments[%d].%s" % [index, field],
+					"index": index,
+				})
 	return issues
 
 static func _validate_time_signature_segments(timing: Dictionary) -> Array[Dictionary]:

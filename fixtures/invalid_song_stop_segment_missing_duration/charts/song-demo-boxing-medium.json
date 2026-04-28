@@ -1,0 +1,17 @@
+{
+  "schema": "aerobeat.content.chart.v1",
+  "chartId": "chart_demo_boxing_medium",
+  "chartName": "Demo Boxing Medium",
+  "songId": "song_demo",
+  "routineId": "routine_demo_boxing",
+  "mode": "boxing",
+  "difficulty": "medium",
+  "interactionFamily": "gesture_2d",
+  "events": [
+    {"beat": 1, "type": "jab_left"},
+    {"beat": 2, "type": "cross_right"}
+  ],
+  "presentation": {
+    "preferredViews": ["portal"]
+  }
+}

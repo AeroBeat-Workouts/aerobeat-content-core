@@ -29,7 +29,9 @@ static func run() -> Dictionary:
 			"tempoSegments": [
 				{"startBeat": 0},
 			],
-			"stopSegments": [],
+			"stopSegments": [
+				{"startBeat": 32},
+			],
 			"timeSignatureSegments": [
 				{"startBeat": 0, "numerator": 4},
 			],
@@ -39,6 +41,7 @@ static func run() -> Dictionary:
 		missing_fields == ["timing"]
 		and valid_timing_issues.is_empty()
 		and invalid_timing_codes == [
+			"song_stop_segment_missing_field",
 			"song_tempo_segment_missing_field",
 			"song_time_signature_segment_missing_field",
 			"song_timing_bpm_shortcut_forbidden",
