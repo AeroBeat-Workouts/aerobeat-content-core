@@ -10,7 +10,6 @@ const REQUIRED_FIELDS := [
 	"mode",
 	"difficulty",
 	"interactionFamily",
-	"timing",
 	"events",
 ]
 

@@ -6,8 +6,28 @@
   "audio": {
     "resourcePath": "audio/demo-song.ogg"
   },
+  "timing": {
+    "anchorMs": 0,
+    "tempoSegments": [
+      {
+        "startBeat": 0,
+        "bpm": 128
+      }
+    ],
+    "stopSegments": [],
+    "timeSignatureSegments": [
+      {
+        "startBeat": 0,
+        "numerator": 4,
+        "denominator": 4
+      }
+    ]
+  },
   "metadata": {
     "artistName": "AeroBeat",
-    "tags": ["demo", "boxing"]
+    "tags": [
+      "demo",
+      "boxing"
+    ]
   }
 }

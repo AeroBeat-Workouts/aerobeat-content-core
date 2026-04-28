@@ -8,18 +8,17 @@
   },
   "timing": {
     "anchorMs": 0,
+    "bpm": 128,
     "tempoSegments": [
       {
-        "startBeat": 0,
-        "bpm": 128
+        "startBeat": 0
       }
     ],
     "stopSegments": [],
     "timeSignatureSegments": [
       {
         "startBeat": 0,
-        "numerator": 4,
-        "denominator": 4
+        "numerator": 4
       }
     ]
   },

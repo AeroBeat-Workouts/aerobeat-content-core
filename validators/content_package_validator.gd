@@ -83,6 +83,15 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 				path,
 				{"kind": kind}
 			))
+		if kind == "song":
+			for issue in Song.validate_timing_shape(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "song_timing_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Song timing contract issue.")),
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
+				))
 		if kind == "workout":
 			for issue in Workout.validate_steps_shape(data):
 				result.add_issue(ContentValidationIssue.create(
@@ -305,6 +314,20 @@ func _id_key_for_kind(kind: String) -> String:
 			return "workoutId"
 		_:
 			return "id"
+
+func _path_with_issue_context(path: String, issue: Dictionary) -> String:
+	var field := String(issue.get("field", ""))
+	if field.is_empty():
+		return path
+	return "%s#%s" % [path, field]
+
+func _issue_reference(issue: Dictionary) -> Dictionary:
+	var reference: Dictionary = {}
+	if issue.has("field"):
+		reference["field"] = issue.get("field")
+	if issue.has("index"):
+		reference["index"] = issue.get("index")
+	return reference
 
 func _path_with_step_context(path: String, issue: Dictionary) -> String:
 	return _step_path(path, int(issue.get("index", -1)), {"stepId": issue.get("stepId", "")})

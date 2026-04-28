@@ -1,0 +1,20 @@
+{
+  "schema": "aerobeat.content.workout.v1",
+  "workoutId": "workout_demo_boxing",
+  "workoutName": "Demo Boxing Workout",
+  "description": "Minimal end-to-end fixture for content-core contract tests.",
+  "coachId": "coach_demo",
+  "coachName": "Coach Demo",
+  "defaultBackgroundSceneId": "scene_demo_gym",
+  "steps": [
+    {
+      "stepId": "step_001",
+      "chartId": "chart_demo_boxing_medium",
+      "songId": "song_demo",
+      "routineId": "routine_demo_boxing",
+      "coachingOverlay": {
+        "beforeClip": "media/coaching/warmup-intro.mp4"
+      }
+    }
+  ]
+}

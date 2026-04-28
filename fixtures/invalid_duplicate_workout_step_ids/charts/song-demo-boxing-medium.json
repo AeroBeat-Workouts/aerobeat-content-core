@@ -7,15 +7,19 @@
   "mode": "boxing",
   "difficulty": "medium",
   "interactionFamily": "gesture_2d",
-  "timing": {
-    "resolution": 16,
-    "beatOffset": 0
-  },
   "events": [
-    {"beat": 1, "type": "jab_left"},
-    {"beat": 2, "type": "cross_right"}
+    {
+      "beat": 1,
+      "type": "jab_left"
+    },
+    {
+      "beat": 2,
+      "type": "cross_right"
+    }
   ],
   "presentation": {
-    "preferredViews": ["portal"]
+    "preferredViews": [
+      "portal"
+    ]
   }
 }
