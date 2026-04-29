@@ -13,7 +13,7 @@ This repo now carries the first contract-focused implementation slice described 
 - `interfaces/` for loader, registry, migration, and workout-resolution contracts
 - `data_types/` for the core durable records and supporting ids/references/query shapes
 - `validators/` for shared structural validation result types plus a minimal package validator
-- `globals/` for stable schema ids, content modes, difficulty vocabulary, and interaction families
+- `globals/` for stable schema ids, content features, difficulty vocabulary, and interaction families
 - `fixtures/` for valid and intentionally broken packages used by contract tests
 - `tests/` for contract checks that exercise manifest validation, set/workout reference detection, and workout-resolution semantics
 - `.testbed/` for a tiny Godot headless project used to run the contract suite without pulling in editor UX or runtime visuals
@@ -24,7 +24,7 @@ The durable content model is **Song → Chart → Set → Workout**. Sets are th
 
 Current docs for this repo should be read through that durable model:
 
-- charts carry shared chart-envelope fields plus mode-specific event payloads
+- charts carry shared chart-envelope fields plus feature-specific event payloads
 - sets own the exact song/chart pairing and package-local composition choices
 - workouts assemble ordered set selections into a session
 - validation and resolution interfaces should be interpreted as package-local composition and workout sequencing helpers inside the set-centered model

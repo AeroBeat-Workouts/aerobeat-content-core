@@ -1,4 +1,4 @@
-class_name ContentMode
+class_name ContentFeature
 extends RefCounted
 
 const BOXING := "boxing"
@@ -8,5 +8,5 @@ const FLOW := "flow"
 
 const ALL := [BOXING, DANCE, STEP, FLOW]
 
-static func is_valid(mode: String) -> bool:
-	return mode in ALL
+static func is_valid(feature: String) -> bool:
+	return feature in ALL

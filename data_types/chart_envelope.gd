@@ -7,7 +7,7 @@ const REQUIRED_FIELDS := [
 	"chartName",
 	"songId",
 	"routineId",
-	"mode",
+	"feature",
 	"difficulty",
 	"interactionFamily",
 	"events",

@@ -4,7 +4,7 @@
   "chartName": "Demo Boxing Medium",
   "songId": "song_demo",
   "routineId": "routine_demo_boxing",
-  "mode": "boxing",
+  "feature": "boxing",
   "difficulty": "medium",
   "interactionFamily": "gesture_2d",
   "events": [

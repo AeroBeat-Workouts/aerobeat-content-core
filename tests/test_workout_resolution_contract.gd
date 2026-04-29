@@ -15,7 +15,7 @@ class FakeWorkoutResolution:
 				"chartId": String(step.get("chartId", "")),
 				"songId": String(chart.get("songId", "")),
 				"routineId": String(chart.get("routineId", "")),
-				"mode": String(chart.get("mode", "")),
+				"feature": String(chart.get("feature", "")),
 				"difficulty": String(chart.get("difficulty", "")),
 			})
 		return {
@@ -39,7 +39,7 @@ static func run() -> Dictionary:
 			"chartId": "chart_demo_boxing_medium",
 			"songId": "song_demo",
 			"routineId": "routine_demo_boxing",
-			"mode": "boxing",
+			"feature": "boxing",
 			"difficulty": "medium",
 		}
 	}

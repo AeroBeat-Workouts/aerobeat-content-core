@@ -3,7 +3,7 @@
   "routineId": "routine_invalid_boxing",
   "routineName": "Broken Boxing Routine",
   "songId": "song_missing",
-  "mode": "boxing",
+  "feature": "boxing",
   "authorId": "coach_demo",
   "authorName": "Coach Demo",
   "charts": ["chart_invalid_boxing_medium"]

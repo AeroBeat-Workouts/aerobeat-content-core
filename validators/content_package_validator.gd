@@ -4,7 +4,7 @@ extends RefCounted
 const AeroContentSchema = preload("res://../globals/aero_content_schema.gd")
 const ContentDifficulty = preload("res://../globals/content_difficulty.gd")
 const ContentId = preload("res://../data_types/content_id.gd")
-const ContentMode = preload("res://../globals/content_mode.gd")
+const ContentFeature = preload("res://../globals/content_feature.gd")
 const ContentPackageManifest = preload("res://../data_types/content_package_manifest.gd")
 const ContentValidationIssue = preload("res://../validators/content_validation_issue.gd")
 const ContentValidationResult = preload("res://../validators/content_validation_result.gd")
@@ -130,19 +130,19 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 			))
 		else:
 			seen_ids[record_id] = path
-		if kind == "routine" and not ContentMode.is_valid(String(data.get("mode", ""))):
+		if kind == "routine" and not ContentFeature.is_valid(String(data.get("feature", ""))):
 			result.add_issue(ContentValidationIssue.create(
-				"invalid_mode",
+				"invalid_feature",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"Routine mode must be one of the canonical content modes.",
+				"Routine feature must be one of the canonical content features.",
 				path
 			))
 		if kind == "chart":
-			if not ContentMode.is_valid(String(data.get("mode", ""))):
+			if not ContentFeature.is_valid(String(data.get("feature", ""))):
 				result.add_issue(ContentValidationIssue.create(
-					"invalid_mode",
+					"invalid_feature",
 					ContentValidationIssue.SEVERITY_ERROR,
-					"Chart mode must be one of the canonical content modes.",
+					"Chart feature must be one of the canonical content features.",
 					path
 				))
 			if not ContentDifficulty.is_valid(String(data.get("difficulty", ""))):

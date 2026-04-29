@@ -4,7 +4,7 @@
   "chartName": "Broken Boxing Medium",
   "songId": "song_missing",
   "routineId": "routine_invalid_boxing",
-  "mode": "boxing",
+  "feature": "boxing",
   "difficulty": "medium",
   "interactionFamily": "gesture_2d",
   "events": [
