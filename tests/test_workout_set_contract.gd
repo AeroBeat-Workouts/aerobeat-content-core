@@ -1,10 +1,10 @@
 extends RefCounted
 
 const Workout = preload("res://../data_types/workout.gd")
-const WorkoutStep = preload("res://../data_types/workout_step.gd")
+const WorkoutSet = preload("res://../data_types/workout_set.gd")
 
 static func run() -> Dictionary:
-	var missing_step_fields := WorkoutStep.validate_shape({
+	var missing_workout_set_fields := WorkoutSet.validate_shape({
 		"stepId": "step_001",
 	})
 	var workout_set_order_issues := Workout.validate_set_order_shape({
@@ -14,15 +14,15 @@ static func run() -> Dictionary:
 		]
 	})
 	var passed := (
-		missing_step_fields == ["setId"]
+		missing_workout_set_fields == ["setId"]
 		and workout_set_order_issues.size() == 1
 		and String(workout_set_order_issues[0].get("code", "")) == "workout_set_order_invalid_entry"
 	)
 	return {
-		"name": "workout_step_contract",
+		"name": "workout_set_contract",
 		"passed": passed,
 		"details": {
-			"missingStepFields": missing_step_fields,
+			"missingWorkoutSetFields": missing_workout_set_fields,
 			"workoutSetOrderIssues": workout_set_order_issues,
 		},
 	}

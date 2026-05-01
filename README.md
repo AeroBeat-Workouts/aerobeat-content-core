@@ -63,4 +63,4 @@ The suite covers:
 
 ## Repository status
 
-This repo now reflects the downscoped AeroBeat v1 content contract. Residual naming debt remains in helper types like `WorkoutStep` and `ResolvedWorkoutStep`, but their semantics are now set-centered rather than routine-centered.
+This repo now reflects the downscoped AeroBeat v1 content contract, including helper type names that now match the set-centered semantics already carried by the contract.

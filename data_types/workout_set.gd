@@ -1,4 +1,4 @@
-class_name WorkoutStep
+class_name WorkoutSet
 extends RefCounted
 
 const REQUIRED_FIELDS := ["stepId", "setId"]

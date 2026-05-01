@@ -1,15 +1,15 @@
 class_name WorkoutResolution
 extends RefCounted
 
-const ResolvedWorkoutStep = preload("res://../data_types/resolved_workout_step.gd")
+const ResolvedWorkoutSet = preload("res://../data_types/resolved_workout_set.gd")
 
 const REQUIRED_FIELDS := ["workoutId", "steps"]
 
 # Canonical semantics:
 # - the returned workoutId must match the source workout.
 # - steps remain in workout order.
-# - each resolved step represents one authored set selection.
-# - each resolved step must include set/chart/song/environment identity plus chart feature+difficulty.
+# - each resolved workout set represents one authored set selection.
+# - each resolved workout set must include set/chart/song/environment identity plus chart feature+difficulty.
 func resolve_workout(_workout: Dictionary, _registry: Variant) -> Dictionary:
 	push_error("WorkoutResolution.resolve_workout must be implemented by a consumer.")
 	return {}
@@ -31,20 +31,20 @@ static func validate_resolved_workout(data: Dictionary) -> Array[Dictionary]:
 		})
 		return issues
 	for index in range(steps_value.size()):
-		var step_value: Variant = steps_value[index]
-		if not (step_value is Dictionary):
+		var resolved_workout_set_value: Variant = steps_value[index]
+		if not (resolved_workout_set_value is Dictionary):
 			issues.append({
 				"code": "resolved_workout_step_invalid_type",
-				"message": "Resolved workout step entries must be dictionaries.",
+				"message": "Resolved workout set entries must be dictionaries.",
 				"index": index,
 			})
 			continue
-		for field in ResolvedWorkoutStep.validate_shape(step_value):
+		for field in ResolvedWorkoutSet.validate_shape(resolved_workout_set_value):
 			issues.append({
 				"code": "resolved_workout_step_missing_field",
-				"message": "Resolved workout step is missing required field '%s'." % field,
+				"message": "Resolved workout set is missing required field '%s'." % field,
 				"field": field,
 				"index": index,
-				"stepId": String(step_value.get("stepId", "")),
+				"stepId": String(resolved_workout_set_value.get("stepId", "")),
 			})
 	return issues

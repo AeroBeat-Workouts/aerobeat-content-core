@@ -8,13 +8,13 @@ class FakeWorkoutResolution:
 	func resolve_workout(workout: Dictionary, registry: Variant) -> Dictionary:
 		var sets_by_id: Dictionary = registry.get("sets", {})
 		var charts_by_id: Dictionary = registry.get("charts", {})
-		var resolved_steps: Array[Dictionary] = []
+		var resolved_workout_sets: Array[Dictionary] = []
 		var set_order: Array = workout.get("setOrder", [])
 		for index in range(set_order.size()):
 			var set_id := String(set_order[index])
 			var set_data: Dictionary = sets_by_id.get(set_id, {})
 			var chart: Dictionary = charts_by_id.get(String(set_data.get("chartId", "")), {})
-			resolved_steps.append({
+			resolved_workout_sets.append({
 				"stepId": "step_%03d" % [index + 1],
 				"setId": set_id,
 				"chartId": String(set_data.get("chartId", "")),
@@ -26,7 +26,7 @@ class FakeWorkoutResolution:
 			})
 		return {
 			"workoutId": String(workout.get("workoutId", "")),
-			"steps": resolved_steps,
+			"steps": resolved_workout_sets,
 		}
 
 static func run() -> Dictionary:

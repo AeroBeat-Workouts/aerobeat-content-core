@@ -7,7 +7,7 @@ const TEST_SCRIPTS := [
 	preload("res://../tests/test_legacy_package_contract.gd"),
 	preload("res://../tests/test_song_timing_contract.gd"),
 	preload("res://../tests/test_song_timing_validation.gd"),
-	preload("res://../tests/test_workout_step_contract.gd"),
+	preload("res://../tests/test_workout_set_contract.gd"),
 	preload("res://../tests/test_workout_resolution_contract.gd"),
 	preload("res://../tests/test_workout_resolution_validation.gd"),
 ]
