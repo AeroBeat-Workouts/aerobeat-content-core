@@ -1,0 +1,7 @@
+{
+  "schema": "aerobeat.content.environment.v1",
+  "environmentId": "environment_demo_gym",
+  "environmentName": "Demo Gym",
+  "type": "image_background",
+  "resourcePath": "media/environments/demo-gym.png"
+}

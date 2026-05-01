@@ -2,9 +2,11 @@ class_name ContentId
 extends RefCounted
 
 const SONG := "song"
-const ROUTINE := "routine"
 const CHART := "chart"
+const SET := "set"
 const WORKOUT := "workout"
+const COACH_CONFIG := "coach_config"
+const ENVIRONMENT := "environment"
 const PACKAGE := "package"
 
 static func is_valid_uid(value: Variant) -> bool:

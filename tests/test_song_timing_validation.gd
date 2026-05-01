@@ -16,8 +16,8 @@ static func run() -> Dictionary:
 		valid_result.is_valid()
 		and invalid_bpm_codes == [
 			"song_tempo_segment_missing_field",
-			"song_time_signature_segment_missing_field",
 			"song_timing_bpm_shortcut_forbidden",
+			"song_timing_missing_field",
 		]
 		and invalid_stop_segment_codes == [
 			"song_stop_segment_missing_field",

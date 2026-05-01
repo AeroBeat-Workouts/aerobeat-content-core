@@ -9,10 +9,12 @@ const ContentPackageManifest = preload("res://../data_types/content_package_mani
 const ContentValidationIssue = preload("res://../validators/content_validation_issue.gd")
 const ContentValidationResult = preload("res://../validators/content_validation_result.gd")
 const InteractionFamily = preload("res://../globals/interaction_family.gd")
-const Routine = preload("res://../data_types/routine.gd")
 const Song = preload("res://../data_types/song.gd")
 const Chart = preload("res://../data_types/chart.gd")
+const ContentSet = preload("res://../data_types/content_set.gd")
 const Workout = preload("res://../data_types/workout.gd")
+const CoachConfig = preload("res://../data_types/coach_config.gd")
+const EnvironmentRecord = preload("res://../data_types/environment.gd")
 
 func validate_fixture_package(package_dir: String) -> ContentValidationResult:
 	var manifest_path := package_dir.path_join("manifest.json")
@@ -29,9 +31,11 @@ func validate_fixture_package(package_dir: String) -> ContentValidationResult:
 	var package_data := {
 		"manifest": manifest,
 		"songs": _load_records(package_dir, manifest.get("songs", [])),
-		"routines": _load_records(package_dir, manifest.get("routines", [])),
 		"charts": _load_records(package_dir, manifest.get("charts", [])),
+		"sets": _load_records(package_dir, manifest.get("sets", [])),
 		"workouts": _load_records(package_dir, manifest.get("workouts", [])),
+		"coaches": _load_records(package_dir, manifest.get("coaches", [])),
+		"environments": _load_records(package_dir, manifest.get("environments", [])),
 	}
 	return validate_package_data(package_data)
 
@@ -40,9 +44,11 @@ func validate_package_data(package_data: Dictionary) -> ContentValidationResult:
 	var manifest: Dictionary = package_data.get("manifest", {})
 	_validate_manifest(manifest, result)
 	_validate_records(package_data.get("songs", []), Song, "song", result)
-	_validate_records(package_data.get("routines", []), Routine, "routine", result)
 	_validate_records(package_data.get("charts", []), Chart, "chart", result)
+	_validate_records(package_data.get("sets", []), ContentSet, "set", result)
 	_validate_records(package_data.get("workouts", []), Workout, "workout", result)
+	_validate_records(package_data.get("coaches", []), CoachConfig, "coach_config", result)
+	_validate_records(package_data.get("environments", []), EnvironmentRecord, "environment", result)
 	_validate_references(package_data, result)
 	return result
 
@@ -53,6 +59,13 @@ func _validate_manifest(manifest: Dictionary, result: ContentValidationResult) -
 			ContentValidationIssue.SEVERITY_ERROR,
 			"Manifest is missing required field '%s'." % field,
 			"manifest"
+		))
+	for field in ContentPackageManifest.forbidden_fields_present(manifest):
+		result.add_issue(ContentValidationIssue.create(
+			"manifest_forbidden_field",
+			ContentValidationIssue.SEVERITY_ERROR,
+			"Manifest field '%s' is legacy contract data and must not be present." % field,
+			"manifest.%s" % field
 		))
 	var schema_id := String(manifest.get("schema", ""))
 	if not AeroContentSchema.is_known_schema(schema_id):
@@ -79,7 +92,7 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 			result.add_issue(ContentValidationIssue.create(
 				"required_field_missing",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"%s is missing required field '%s'." % [kind.capitalize(), field],
+				"%s is missing required field '%s'." % [_kind_label(kind), field],
 				path,
 				{"kind": kind}
 			))
@@ -93,56 +106,50 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 					_issue_reference(issue)
 				))
 		if kind == "workout":
-			for issue in Workout.validate_steps_shape(data):
+			for issue in Workout.validate_set_order_shape(data):
 				result.add_issue(ContentValidationIssue.create(
 					String(issue.get("code", "workout_contract_issue")),
 					ContentValidationIssue.SEVERITY_ERROR,
 					String(issue.get("message", "Workout contract issue.")),
-					_path_with_step_context(path, issue),
-					_workout_issue_reference(issue)
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
 				))
 		var schema_id := String(data.get("schema", ""))
 		if not AeroContentSchema.is_known_record_schema(schema_id):
 			result.add_issue(ContentValidationIssue.create(
 				"record_unknown_schema",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"%s schema '%s' is not recognized." % [kind.capitalize(), schema_id],
+				"%s schema '%s' is not recognized." % [_kind_label(kind), schema_id],
 				path,
 				{"kind": kind}
 			))
 		var id_key := _id_key_for_kind(kind)
 		var record_id := String(data.get(id_key, ""))
-		if not ContentId.is_valid_uid(record_id):
+		if not record_id.is_empty() and not ContentId.is_valid_uid(record_id):
 			result.add_issue(ContentValidationIssue.create(
 				"invalid_uid",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"%s field '%s' must be a stable lowercase UID." % [kind.capitalize(), id_key],
+				"%s field '%s' must be a stable lowercase UID." % [_kind_label(kind), id_key],
 				path,
 				{"kind": kind, "id": record_id}
 			))
-		elif seen_ids.has(record_id):
-			result.add_issue(ContentValidationIssue.create(
-				"duplicate_id",
-				ContentValidationIssue.SEVERITY_ERROR,
-				"Duplicate %s id '%s'." % [kind, record_id],
-				path,
-				{"kind": kind, "id": record_id}
-			))
-		else:
-			seen_ids[record_id] = path
-		if kind == "routine" and not ContentFeature.is_valid(String(data.get("feature", ""))):
-			result.add_issue(ContentValidationIssue.create(
-				"invalid_feature",
-				ContentValidationIssue.SEVERITY_ERROR,
-				"Routine feature must be one of the canonical content features.",
-				path
-			))
+		elif not record_id.is_empty():
+			if seen_ids.has(record_id):
+				result.add_issue(ContentValidationIssue.create(
+					"duplicate_id",
+					ContentValidationIssue.SEVERITY_ERROR,
+					"Duplicate %s id '%s'." % [kind, record_id],
+					path,
+					{"kind": kind, "id": record_id}
+				))
+			else:
+				seen_ids[record_id] = path
 		if kind == "chart":
 			if not ContentFeature.is_valid(String(data.get("feature", ""))):
 				result.add_issue(ContentValidationIssue.create(
 					"invalid_feature",
 					ContentValidationIssue.SEVERITY_ERROR,
-					"Chart feature must be one of the canonical content features.",
+					"Chart feature must be one of the canonical v1 content features (boxing or flow).",
 					path
 				))
 			if not ContentDifficulty.is_valid(String(data.get("difficulty", ""))):
@@ -159,119 +166,136 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 					"Chart interactionFamily must be one of the canonical interaction families.",
 					path
 				))
+		if kind == "environment":
+			for issue in EnvironmentRecord.validate_contract(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "environment_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Environment contract issue.")),
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
+				))
+		if kind == "coach_config":
+			for issue in CoachConfig.validate_contract(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "coach_config_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Coach config contract issue.")),
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
+				))
 
 func _validate_references(package_data: Dictionary, result: ContentValidationResult) -> void:
 	var songs_by_id := _index_records(package_data.get("songs", []), "songId")
-	var routines_by_id := _index_records(package_data.get("routines", []), "routineId")
 	var charts_by_id := _index_records(package_data.get("charts", []), "chartId")
-	for routine_record in package_data.get("routines", []):
-		var routine: Dictionary = routine_record.get("data", {})
-		if not songs_by_id.has(String(routine.get("songId", ""))):
+	var sets_by_id := _index_records(package_data.get("sets", []), "setId")
+	var coaches_by_id := _index_records(package_data.get("coaches", []), "coachConfigId")
+	var environments_by_id := _index_records(package_data.get("environments", []), "environmentId")
+	for set_record in package_data.get("sets", []):
+		var set_data: Dictionary = set_record.get("data", {})
+		var set_path := String(set_record.get("path", ""))
+		if not songs_by_id.has(String(set_data.get("songId", ""))):
 			result.add_issue(ContentValidationIssue.create(
 				"missing_song_ref",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"Routine references a songId that is not present in the package.",
-				String(routine_record.get("path", "")),
-				{"songId": routine.get("songId", "")}
+				"Set references a songId that is not present in the package.",
+				set_path,
+				{"songId": set_data.get("songId", "")}
 			))
-		for chart_id in routine.get("charts", []):
-			if not charts_by_id.has(String(chart_id)):
-				result.add_issue(ContentValidationIssue.create(
-					"missing_chart_ref",
-					ContentValidationIssue.SEVERITY_ERROR,
-					"Routine charts list references a chartId that is not present in the package.",
-					String(routine_record.get("path", "")),
-					{"chartId": chart_id}
-				))
-	for chart_record in package_data.get("charts", []):
-		var chart: Dictionary = chart_record.get("data", {})
-		if not routines_by_id.has(String(chart.get("routineId", ""))):
-			result.add_issue(ContentValidationIssue.create(
-				"missing_routine_ref",
-				ContentValidationIssue.SEVERITY_ERROR,
-				"Chart references a routineId that is not present in the package.",
-				String(chart_record.get("path", "")),
-				{"routineId": chart.get("routineId", "")}
-			))
-		if not songs_by_id.has(String(chart.get("songId", ""))):
-			result.add_issue(ContentValidationIssue.create(
-				"missing_song_ref",
-				ContentValidationIssue.SEVERITY_ERROR,
-				"Chart references a songId that is not present in the package.",
-				String(chart_record.get("path", "")),
-				{"songId": chart.get("songId", "")}
-			))
-	for workout_record in package_data.get("workouts", []):
-		var workout: Dictionary = workout_record.get("data", {})
-		_validate_workout_steps(
-			workout,
-			String(workout_record.get("path", "")),
-			charts_by_id,
-			result
-		)
-
-func _validate_workout_steps(workout: Dictionary, workout_path: String, charts_by_id: Dictionary, result: ContentValidationResult) -> void:
-	var steps_value: Variant = workout.get("steps", [])
-	if not (steps_value is Array):
-		return
-	var seen_step_ids: Dictionary = {}
-	for index in range(steps_value.size()):
-		var step_value: Variant = steps_value[index]
-		if not (step_value is Dictionary):
-			continue
-		var step: Dictionary = step_value
-		var step_path := _step_path(workout_path, index, step)
-		var step_id := String(step.get("stepId", ""))
-		if not step_id.is_empty():
-			if seen_step_ids.has(step_id):
-				result.add_issue(ContentValidationIssue.create(
-					"duplicate_workout_step_id",
-					ContentValidationIssue.SEVERITY_ERROR,
-					"Workout stepId '%s' must be unique within a workout." % step_id,
-					step_path,
-					{"stepId": step_id, "workoutId": String(workout.get("workoutId", ""))}
-				))
-			else:
-				seen_step_ids[step_id] = index
-		var chart_id := String(step.get("chartId", ""))
-		if chart_id.is_empty():
-			continue
-		if not charts_by_id.has(chart_id):
+		if not charts_by_id.has(String(set_data.get("chartId", ""))):
 			result.add_issue(ContentValidationIssue.create(
 				"missing_chart_ref",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"Workout step references a chartId that is not present in the package.",
-				step_path,
-				{"chartId": chart_id, "stepId": step_id}
+				"Set references a chartId that is not present in the package.",
+				set_path,
+				{"chartId": set_data.get("chartId", "")}
 			))
+		if not environments_by_id.has(String(set_data.get("environmentId", ""))):
+			result.add_issue(ContentValidationIssue.create(
+				"missing_environment_ref",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Set references an environmentId that is not present in the package.",
+				set_path,
+				{"environmentId": set_data.get("environmentId", "")}
+			))
+	for workout_record in package_data.get("workouts", []):
+		var workout: Dictionary = workout_record.get("data", {})
+		var workout_path := String(workout_record.get("path", ""))
+		var coach_config_id := String(workout.get("coachConfigId", ""))
+		var coach_config: Dictionary = {}
+		if not coaches_by_id.has(coach_config_id):
+			result.add_issue(ContentValidationIssue.create(
+				"missing_coach_config_ref",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Workout references a coachConfigId that is not present in the package.",
+				workout_path,
+				{"coachConfigId": coach_config_id}
+			))
+		else:
+			coach_config = coaches_by_id[coach_config_id].get("data", {})
+		var set_order_value: Variant = workout.get("setOrder", [])
+		if not (set_order_value is Array):
 			continue
-		var chart: Dictionary = charts_by_id[chart_id].get("data", {})
-		if step.has("songId") and String(step.get("songId", "")) != String(chart.get("songId", "")):
+		var seen_set_ids: Dictionary = {}
+		for index in range(set_order_value.size()):
+			var set_id := String(set_order_value[index])
+			var set_path := "%s#setOrder[%d]" % [workout_path, index]
+			if set_id.is_empty():
+				continue
+			if seen_set_ids.has(set_id):
+				result.add_issue(ContentValidationIssue.create(
+					"duplicate_set_order_id",
+					ContentValidationIssue.SEVERITY_ERROR,
+					"Workout setOrder contains duplicate set id '%s'." % set_id,
+					set_path,
+					{"setId": set_id}
+				))
+			else:
+				seen_set_ids[set_id] = index
+			if not sets_by_id.has(set_id):
+				result.add_issue(ContentValidationIssue.create(
+					"missing_set_ref",
+					ContentValidationIssue.SEVERITY_ERROR,
+					"Workout setOrder references a setId that is not present in the package.",
+					set_path,
+					{"setId": set_id}
+				))
+				continue
+			var set_data: Dictionary = sets_by_id[set_id].get("data", {})
+			_validate_coaching_overlay_reference(set_data, coach_config, set_path, result)
+
+func _validate_coaching_overlay_reference(set_data: Dictionary, coach_config: Dictionary, path: String, result: ContentValidationResult) -> void:
+	if coach_config.is_empty():
+		return
+	var enabled := bool(coach_config.get("enabled", false))
+	var overlay_id := String(set_data.get("coachingOverlayId", ""))
+	if not enabled:
+		if not overlay_id.is_empty():
 			result.add_issue(ContentValidationIssue.create(
-				"workout_step_song_mismatch",
+				"unexpected_coaching_overlay_ref",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"Workout step songId must match the referenced chart songId.",
-				step_path,
-				{
-					"stepId": step_id,
-					"chartId": chart_id,
-					"songId": step.get("songId", ""),
-					"expectedSongId": chart.get("songId", ""),
-				}
+				"Set references coachingOverlayId while coaching is disabled.",
+				path,
+				{"coachingOverlayId": overlay_id}
 			))
-		if step.has("routineId") and String(step.get("routineId", "")) != String(chart.get("routineId", "")):
-			result.add_issue(ContentValidationIssue.create(
-				"workout_step_routine_mismatch",
-				ContentValidationIssue.SEVERITY_ERROR,
-				"Workout step routineId must match the referenced chart routineId.",
-				step_path,
-				{
-					"stepId": step_id,
-					"chartId": chart_id,
-					"routineId": step.get("routineId", ""),
-					"expectedRoutineId": chart.get("routineId", ""),
-				}
-			))
+		return
+	if overlay_id.is_empty():
+		result.add_issue(ContentValidationIssue.create(
+			"missing_required_coaching_overlay_ref",
+			ContentValidationIssue.SEVERITY_ERROR,
+			"Set must declare coachingOverlayId when coaching is enabled.",
+			path
+		))
+		return
+	var overlays_by_id := CoachConfig.overlay_audio_index(coach_config)
+	if not overlays_by_id.has(overlay_id):
+		result.add_issue(ContentValidationIssue.create(
+			"missing_coaching_overlay_ref",
+			ContentValidationIssue.SEVERITY_ERROR,
+			"Set references a coachingOverlayId that is not present in the coach config.",
+			path,
+			{"coachingOverlayId": overlay_id}
+		))
 
 func _load_records(package_dir: String, manifest_entries: Array) -> Array[Dictionary]:
 	var records: Array[Dictionary] = []
@@ -306,14 +330,25 @@ func _id_key_for_kind(kind: String) -> String:
 	match kind:
 		"song":
 			return "songId"
-		"routine":
-			return "routineId"
 		"chart":
 			return "chartId"
+		"set":
+			return "setId"
 		"workout":
 			return "workoutId"
+		"coach_config":
+			return "coachConfigId"
+		"environment":
+			return "environmentId"
 		_:
 			return "id"
+
+func _kind_label(kind: String) -> String:
+	match kind:
+		"coach_config":
+			return "Coach config"
+		_:
+			return kind.capitalize()
 
 func _path_with_issue_context(path: String, issue: Dictionary) -> String:
 	var field := String(issue.get("field", ""))
@@ -328,23 +363,3 @@ func _issue_reference(issue: Dictionary) -> Dictionary:
 	if issue.has("index"):
 		reference["index"] = issue.get("index")
 	return reference
-
-func _path_with_step_context(path: String, issue: Dictionary) -> String:
-	return _step_path(path, int(issue.get("index", -1)), {"stepId": issue.get("stepId", "")})
-
-func _workout_issue_reference(issue: Dictionary) -> Dictionary:
-	var reference: Dictionary = {}
-	if issue.has("field"):
-		reference["field"] = issue.get("field")
-	if issue.has("index"):
-		reference["stepIndex"] = issue.get("index")
-	if issue.has("stepId"):
-		reference["stepId"] = issue.get("stepId")
-	return reference
-
-func _step_path(workout_path: String, index: int, step: Dictionary) -> String:
-	var suffix := "steps[%d]" % index
-	var step_id := String(step.get("stepId", ""))
-	if not step_id.is_empty():
-		suffix += "(%s)" % step_id
-	return "%s#%s" % [workout_path, suffix]

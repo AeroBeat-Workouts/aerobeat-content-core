@@ -14,13 +14,7 @@
         "startBeat": 0
       }
     ],
-    "stopSegments": [],
-    "timeSignatureSegments": [
-      {
-        "startBeat": 0,
-        "numerator": 4
-      }
-    ]
+    "stopSegments": []
   },
   "metadata": {
     "artistName": "AeroBeat",

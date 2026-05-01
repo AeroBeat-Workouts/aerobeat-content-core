@@ -8,8 +8,8 @@ const REQUIRED_FIELDS := ["workoutId", "steps"]
 # Canonical semantics:
 # - the returned workoutId must match the source workout.
 # - steps remain in workout order.
-# - each resolved step represents a structurally legal workout step using package-local content.
-# - each resolved step must include chart/song/routine identity plus chart feature+difficulty.
+# - each resolved step represents one authored set selection.
+# - each resolved step must include set/chart/song/environment identity plus chart feature+difficulty.
 func resolve_workout(_workout: Dictionary, _registry: Variant) -> Dictionary:
 	push_error("WorkoutResolution.resolve_workout must be implemented by a consumer.")
 	return {}

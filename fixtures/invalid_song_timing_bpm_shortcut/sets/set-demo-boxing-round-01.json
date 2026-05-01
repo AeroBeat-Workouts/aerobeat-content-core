@@ -1,0 +1,9 @@
+{
+  "schema": "aerobeat.content.set.v1",
+  "setId": "set_demo_boxing_round_01",
+  "setName": "Demo Boxing Round 01",
+  "songId": "song_demo",
+  "chartId": "chart_demo_boxing_medium",
+  "environmentId": "environment_demo_gym",
+  "coachingOverlayId": "overlay_demo_round_01"
+}

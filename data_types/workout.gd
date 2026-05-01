@@ -1,9 +1,7 @@
 class_name Workout
 extends RefCounted
 
-const WorkoutStep = preload("res://../data_types/workout_step.gd")
-
-const REQUIRED_FIELDS := ["schema", "workoutId", "workoutName", "description", "coachId", "coachName", "steps"]
+const REQUIRED_FIELDS := ["schema", "workoutId", "workoutName", "description", "coachConfigId", "setOrder"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	var missing: Array[String] = []
@@ -12,33 +10,25 @@ static func validate_shape(data: Dictionary) -> Array[String]:
 			missing.append(field)
 	return missing
 
-static func validate_steps_shape(data: Dictionary) -> Array[Dictionary]:
+static func validate_set_order_shape(data: Dictionary) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
-	if not data.has("steps"):
+	if not data.has("setOrder"):
 		return issues
-	var steps_value: Variant = data.get("steps")
-	if not (steps_value is Array):
+	var set_order_value: Variant = data.get("setOrder")
+	if not (set_order_value is Array):
 		issues.append({
-			"code": "workout_steps_invalid_type",
-			"message": "Workout steps must be an array of workout-step records.",
+			"code": "workout_set_order_invalid_type",
+			"message": "Workout setOrder must be an array of set ids.",
+			"field": "setOrder",
 		})
 		return issues
-	for index in range(steps_value.size()):
-		var step_value: Variant = steps_value[index]
-		if not (step_value is Dictionary):
+	for index in range(set_order_value.size()):
+		var set_id_value: Variant = set_order_value[index]
+		if not (set_id_value is String) or String(set_id_value).strip_edges().is_empty():
 			issues.append({
-				"code": "workout_step_invalid_type",
-				"message": "Workout step entries must be dictionaries.",
+				"code": "workout_set_order_invalid_entry",
+				"message": "Workout setOrder entries must be non-empty set ids.",
+				"field": "setOrder[%d]" % index,
 				"index": index,
-			})
-			continue
-		var missing_fields := WorkoutStep.validate_shape(step_value)
-		for field in missing_fields:
-			issues.append({
-				"code": "workout_step_missing_field",
-				"message": "Workout step is missing required field '%s'." % field,
-				"field": field,
-				"index": index,
-				"stepId": String(step_value.get("stepId", "")),
 			})
 	return issues

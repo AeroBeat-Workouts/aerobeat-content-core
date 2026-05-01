@@ -1,0 +1,38 @@
+{
+  "schema": "aerobeat.content.package_manifest.v1",
+  "packageId": "pkg_demo_boxing",
+  "packageVersion": "1.0.0",
+  "songs": [
+    {
+      "path": "songs/song-demo.json"
+    }
+  ],
+  "charts": [
+    {
+      "path": "charts/chart-demo-boxing-medium.json"
+    }
+  ],
+  "sets": [
+    {
+      "path": "sets/set-demo-boxing-round-01.json"
+    }
+  ],
+  "workouts": [
+    {
+      "path": "workouts/demo-workout.json"
+    }
+  ],
+  "coaches": [
+    {
+      "path": "coaches/coach-config.json"
+    }
+  ],
+  "environments": [
+    {
+      "path": "environments/environment-demo-gym.json"
+    }
+  ],
+  "routines": [],
+  "assets": [],
+  "assetSelections": []
+}

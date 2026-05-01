@@ -1,0 +1,28 @@
+{
+  "schema": "aerobeat.content.coach_config.v1",
+  "coachConfigId": "coach_config_demo",
+  "coachConfigName": "Demo Coach Config",
+  "enabled": true,
+  "featuredCoaches": [
+    {
+      "coachId": "coach_demo",
+      "coachName": "Coach Demo"
+    }
+  ],
+  "warmupVideo": {
+    "mediaId": "warmup_demo",
+    "path": "media/coaching/warmup-intro.mp4"
+  },
+  "cooldownVideo": {
+    "mediaId": "cooldown_demo",
+    "path": "media/coaching/cooldown-outro.mp4"
+  },
+  "overlayAudio": [
+    {
+      "overlayId": "overlay_demo_round_01",
+      "coachId": "coach_demo",
+      "mediaId": "overlay_demo_round_01_media",
+      "path": "media/coaching/overlay-round-01.ogg"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "aerobeat.content.workout.v1",
+  "workoutId": "workout_demo_boxing",
+  "workoutName": "Demo Boxing Workout",
+  "description": "Minimal end-to-end fixture for content-core contract tests.",
+  "coachConfigId": "coach_config_demo",
+  "setOrder": [
+    "set_demo_boxing_round_01",
+    "set_demo_boxing_round_01"
+  ]
+}

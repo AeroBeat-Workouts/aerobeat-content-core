@@ -12,7 +12,7 @@ static func run() -> Dictionary:
 	issue_codes.sort()
 	var passed := (
 		not result.is_valid()
-		and issue_codes == ["missing_song_ref", "missing_song_ref"]
+		and issue_codes == ["missing_song_ref"]
 	)
 	return {
 		"name": "content_reference_validation",

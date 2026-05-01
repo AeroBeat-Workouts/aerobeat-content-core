@@ -1,59 +1,66 @@
 # aerobeat-content-core
 
-Canonical AeroBeat authored-content contracts, including Songs, Charts, Sets, Workouts, shared chart-envelope types, and content loading or validation interfaces.
+Canonical AeroBeat authored-content contracts for the downscoped v1 package model: Songs, Charts, Sets, Workouts, Coach Configs, Environments, shared chart-envelope types, and lightweight package validation helpers.
 
 ## Architecture role
 
-`aerobeat-content-core` is the lane owner for durable authored-content contracts. It defines the reusable content model that feature repos consume, while keeping mode-specific runtime behavior out of the content lane.
+`aerobeat-content-core` owns the durable content-lane contract shared by authoring tools and runtime consumers. This repo defines the small set-centered package truth while leaving gameplay execution, rendering, scoring, and editor UX to other repos.
 
-## Day-one scaffold
+## Approved v1 contract
 
-This repo now carries the first contract-focused implementation slice described in `aerobeat-docs/docs/architecture/content-repo-shapes.md`:
+The current canonical authored package shape is:
 
-- `interfaces/` for loader, registry, migration, and workout-resolution contracts
-- `data_types/` for the core durable records and supporting ids/references/query shapes
-- `validators/` for shared structural validation result types plus a minimal package validator
-- `globals/` for stable schema ids, content features, difficulty vocabulary, and interaction families
-- `fixtures/` for valid and intentionally broken packages used by contract tests
-- `tests/` for contract checks that exercise manifest validation, set/workout reference detection, and workout-resolution semantics
-- `.testbed/` for a tiny Godot headless project used to run the contract suite without pulling in editor UX or runtime visuals
+- `songs/`
+- `charts/`
+- `sets/`
+- `workouts/`
+- `coaches/`
+- `environments/`
 
-## Workout contract slice
+Key rules:
 
-The durable content model is **Song → Chart → Set → Workout**. Sets are the single package-local linker between reusable songs/charts and workout sequencing.
+- official gameplay features are **boxing** and **flow**
+- **dance** and **step** are not valid shared content-core feature values
+- **Set** is the package-local composition linker between one song, one chart, one environment, and optional coaching overlay selection
+- **Workout** sequences ordered `setId` values
+- coaching remains valid through coach-config content
+- package-local gameplay `assets` and `assetSelections` are not part of the active contract here
+- `routine` is not canonical truth in this repo
 
-Current docs for this repo should be read through that durable model:
+## Repository scope
 
-- charts carry shared chart-envelope fields plus feature-specific event payloads
-- sets own the exact song/chart pairing and package-local composition choices
-- workouts assemble ordered set selections into a session
-- validation and resolution interfaces should be interpreted as package-local composition and workout sequencing helpers inside the set-centered model
+This repo intentionally stays contract-focused. It answers:
 
-## Current scope
-
-This scaffold is intentionally dependency-light and contract-focused. It is meant to answer:
-
-- what fields make up valid content-lane records
-- what basic shared enums/constants are canonical
-- what package/reference checks are shared across tools and runtime
-- what a tiny end-to-end content package looks like on day one under the set-centered model
+- which authored record fields are structurally required
+- which shared enums and schema ids are canonical
+- which package/reference checks are shared across tooling
+- what a minimal valid set-centered content package looks like
 
 It intentionally does **not** own:
 
 - editor UX
 - CLI command parsing
 - runtime rendering or scoring systems
-- mode-specific semantic gameplay validation
-- import/export workflow state
+- mode-specific semantic gameplay validation beyond shared structure
+- internal product asset catalogs or package-local gameplay asset subsets
 
 ## Validation
 
-Run the current headless contract suite with:
+Run the headless contract suite with:
 
 ```bash
 godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
 ```
 
+The suite covers:
+
+- valid minimal boxing package acceptance under the set-centered contract
+- rejection of missing set/song references
+- rejection of forbidden legacy manifest fields such as `routines`, `assets`, and `assetSelections`
+- rejection of non-v1 gameplay features such as `dance` and `step`
+- workout sequencing and workout-resolution semantics based on `setId`
+- song timing structural validation
+
 ## Repository status
 
-This repo is the canonical home for shared content-lane contracts in the six-core AeroBeat architecture. Keep the contract surface focused on durable content definitions and validation interfaces instead of drifting into gameplay logic or asset ownership.
+This repo now reflects the downscoped AeroBeat v1 content contract. Residual naming debt remains in helper types like `WorkoutStep` and `ResolvedWorkoutStep`, but their semantics are now set-centered rather than routine-centered.
