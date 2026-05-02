@@ -1,7 +1,7 @@
 class_name WorkoutSet
 extends RefCounted
 
-const REQUIRED_FIELDS := ["stepId", "setId"]
+const REQUIRED_FIELDS := ["setId"]
 const OPTIONAL_REFERENCE_FIELDS := ["chartId", "songId", "environmentId", "coachingOverlayId"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:

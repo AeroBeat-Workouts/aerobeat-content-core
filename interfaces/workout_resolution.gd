@@ -3,11 +3,11 @@ extends RefCounted
 
 const ResolvedWorkoutSet = preload("res://../data_types/resolved_workout_set.gd")
 
-const REQUIRED_FIELDS := ["workoutId", "steps"]
+const REQUIRED_FIELDS := ["workoutId", "sets"]
 
 # Canonical semantics:
 # - the returned workoutId must match the source workout.
-# - steps remain in workout order.
+# - sets remain in workout order.
 # - each resolved workout set represents one authored set selection.
 # - each resolved workout set must include set/chart/song/environment identity plus chart feature+difficulty.
 func resolve_workout(_workout: Dictionary, _registry: Variant) -> Dictionary:
@@ -23,28 +23,28 @@ static func validate_resolved_workout(data: Dictionary) -> Array[Dictionary]:
 				"message": "Resolved workout is missing required field '%s'." % field,
 				"field": field,
 			})
-	var steps_value: Variant = data.get("steps", [])
-	if data.has("steps") and not (steps_value is Array):
+	var sets_value: Variant = data.get("sets", [])
+	if data.has("sets") and not (sets_value is Array):
 		issues.append({
-			"code": "resolved_workout_steps_invalid_type",
-			"message": "Resolved workout steps must be an array.",
+			"code": "resolved_workout_sets_invalid_type",
+			"message": "Resolved workout sets must be an array.",
 		})
 		return issues
-	for index in range(steps_value.size()):
-		var resolved_workout_set_value: Variant = steps_value[index]
+	for index in range(sets_value.size()):
+		var resolved_workout_set_value: Variant = sets_value[index]
 		if not (resolved_workout_set_value is Dictionary):
 			issues.append({
-				"code": "resolved_workout_step_invalid_type",
+				"code": "resolved_workout_set_invalid_type",
 				"message": "Resolved workout set entries must be dictionaries.",
 				"index": index,
 			})
 			continue
 		for field in ResolvedWorkoutSet.validate_shape(resolved_workout_set_value):
 			issues.append({
-				"code": "resolved_workout_step_missing_field",
+				"code": "resolved_workout_set_missing_field",
 				"message": "Resolved workout set is missing required field '%s'." % field,
 				"field": field,
 				"index": index,
-				"stepId": String(resolved_workout_set_value.get("stepId", "")),
+				"setId": String(resolved_workout_set_value.get("setId", "")),
 			})
 	return issues

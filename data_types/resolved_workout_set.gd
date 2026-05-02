@@ -1,7 +1,7 @@
 class_name ResolvedWorkoutSet
 extends RefCounted
 
-const REQUIRED_FIELDS := ["stepId", "setId", "chartId", "songId", "environmentId", "feature", "difficulty"]
+const REQUIRED_FIELDS := ["setId", "chartId", "songId", "environmentId", "feature", "difficulty"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	var missing: Array[String] = []

@@ -10,12 +10,11 @@ class FakeWorkoutResolution:
 		var charts_by_id: Dictionary = registry.get("charts", {})
 		var resolved_workout_sets: Array[Dictionary] = []
 		var set_order: Array = workout.get("setOrder", [])
-		for index in range(set_order.size()):
-			var set_id := String(set_order[index])
+		for set_order_entry in set_order:
+			var set_id := String(set_order_entry)
 			var set_data: Dictionary = sets_by_id.get(set_id, {})
 			var chart: Dictionary = charts_by_id.get(String(set_data.get("chartId", "")), {})
 			resolved_workout_sets.append({
-				"stepId": "step_%03d" % [index + 1],
 				"setId": set_id,
 				"chartId": String(set_data.get("chartId", "")),
 				"songId": String(set_data.get("songId", "")),
@@ -26,7 +25,7 @@ class FakeWorkoutResolution:
 			})
 		return {
 			"workoutId": String(workout.get("workoutId", "")),
-			"steps": resolved_workout_sets,
+			"sets": resolved_workout_sets,
 		}
 
 static func run() -> Dictionary:
@@ -57,9 +56,9 @@ static func run() -> Dictionary:
 	var validation_issues := WorkoutResolution.validate_resolved_workout(resolved)
 	var passed: bool = (
 		String(resolved.get("workoutId", "")) == "workout_demo_boxing"
-		and resolved.get("steps", []).size() == 1
-		and String(resolved["steps"][0].get("setId", "")) == "set_demo_boxing_round_01"
-		and String(resolved["steps"][0].get("songId", "")) == "song_demo"
+		and resolved.get("sets", []).size() == 1
+		and String(resolved["sets"][0].get("setId", "")) == "set_demo_boxing_round_01"
+		and String(resolved["sets"][0].get("songId", "")) == "song_demo"
 		and validation_issues.is_empty()
 	)
 	return {

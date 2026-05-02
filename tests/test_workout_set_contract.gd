@@ -5,7 +5,6 @@ const WorkoutSet = preload("res://../data_types/workout_set.gd")
 
 static func run() -> Dictionary:
 	var missing_workout_set_fields := WorkoutSet.validate_shape({
-		"stepId": "step_001",
 	})
 	var workout_set_order_issues := Workout.validate_set_order_shape({
 		"setOrder": [
