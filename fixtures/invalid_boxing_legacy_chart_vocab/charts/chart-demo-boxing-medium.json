@@ -8,11 +8,15 @@
   "events": [
     {
       "beat": 1,
-      "type": "punch_left"
+      "type": "jab"
     },
     {
       "beat": 2,
-      "type": "punch_right"
+      "type": "cross"
+    },
+    {
+      "beat": 3,
+      "type": "orthodox"
     }
   ]
 }

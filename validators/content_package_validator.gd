@@ -145,6 +145,14 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 			else:
 				seen_ids[record_id] = path
 		if kind == "chart":
+			for issue in Chart.validate_contract(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "chart_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Chart contract issue.")),
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
+				))
 			if not ContentFeature.is_valid(String(data.get("feature", ""))):
 				result.add_issue(ContentValidationIssue.create(
 					"invalid_feature",

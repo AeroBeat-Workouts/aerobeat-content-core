@@ -20,6 +20,9 @@ The current canonical authored package shape is:
 Key rules:
 
 - official gameplay features are **boxing** and **flow**
+- Boxing straight-punch chart types are `punch_left` / `punch_right`; `guard` is canonical wording
+- `orthodox` / `southpaw` are authored stance semantics, not tracked input-event vocabulary
+- Flow keeps `placement` = pass-through location and optional `direction` = follow-through guidance
 - **dance** and **step** are not valid shared content-core feature values
 - **Set** is the package-local composition linker between one song, one chart, one environment, and optional coaching overlay selection
 - **Workout** sequences ordered `setId` values
@@ -55,6 +58,9 @@ godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
 The suite covers:
 
 - valid minimal boxing package acceptance under the set-centered contract
+- rejection of legacy Boxing punch labels such as `jab`, `cross`, `jab_left`, and `cross_right`
+- rejection of Boxing stance labels when they are authored as tracked input events
+- preservation of Flow `placement` vs `direction` chart-field semantics
 - rejection of missing set/song references
 - rejection of forbidden legacy manifest fields such as `routines`, `assets`, and `assetSelections`
 - rejection of non-v1 gameplay features such as `dance` and `step`
