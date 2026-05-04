@@ -4,18 +4,17 @@
   "chartName": "Demo Boxing Medium",
   "feature": "boxing",
   "difficulty": "medium",
-  "interactionFamily": "gesture_2d",
-  "events": [
+  "beats": [
     {
-      "beat": 1,
+      "start": 1.0,
       "type": "jab"
     },
     {
-      "beat": 2,
+      "start": 2.0,
       "type": "cross"
     },
     {
-      "beat": 3,
+      "start": 3.0,
       "type": "orthodox"
     }
   ]

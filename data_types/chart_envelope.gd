@@ -7,8 +7,7 @@ const REQUIRED_FIELDS := [
 	"chartName",
 	"feature",
 	"difficulty",
-	"interactionFamily",
-	"events",
+	"beats",
 ]
 
 static func validate_shape(data: Dictionary) -> Array[String]:

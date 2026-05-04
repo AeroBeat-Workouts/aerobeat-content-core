@@ -11,11 +11,25 @@ static func run() -> Dictionary:
 	for issue in fixture_result.issues:
 		fixture_codes.append(String(issue.get("code", "")))
 	fixture_codes.sort()
+	var valid_boxing_issues := Chart.validate_contract({
+		"feature": "boxing",
+		"beats": [
+			{
+				"start": 1.0,
+				"type": "orthodox",
+				"end": 2.0,
+			},
+			{
+				"start": 3.0,
+				"type": "southpaw",
+			}
+		]
+	})
 	var valid_flow_issues := Chart.validate_contract({
 		"feature": "flow",
-		"events": [
+		"beats": [
 			{
-				"beat": 1,
+				"start": 1.0,
 				"type": "arc",
 				"placement": 4,
 				"direction": 6,
@@ -24,9 +38,9 @@ static func run() -> Dictionary:
 	})
 	var invalid_flow_issues := Chart.validate_contract({
 		"feature": "flow",
-		"events": [
+		"beats": [
 			{
-				"beat": 1,
+				"start": 1.0,
 				"type": "arc",
 				"direction": 6,
 			}
@@ -38,15 +52,17 @@ static func run() -> Dictionary:
 	invalid_flow_codes.sort()
 	var passed := (
 		not fixture_result.is_valid()
-		and fixture_codes == ["invalid_boxing_stance_event", "invalid_boxing_type", "invalid_boxing_type"]
+		and fixture_codes == ["invalid_boxing_type", "invalid_boxing_type"]
+		and valid_boxing_issues.is_empty()
 		and valid_flow_issues.is_empty()
-		and invalid_flow_codes == ["flow_event_missing_placement"]
+		and invalid_flow_codes == ["flow_beat_missing_placement"]
 	)
 	return {
 		"name": "chart_event_contract",
 		"passed": passed,
 		"details": {
 			"fixtureIssues": fixture_result.to_dict(),
+			"validBoxingIssues": valid_boxing_issues,
 			"validFlowIssues": valid_flow_issues,
 			"invalidFlowIssues": invalid_flow_issues,
 		},

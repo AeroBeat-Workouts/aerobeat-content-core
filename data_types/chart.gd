@@ -18,89 +18,101 @@ static func validate_shape(data: Dictionary) -> Array[String]:
 static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
 	var feature := String(data.get("feature", ""))
-	var events_value: Variant = data.get("events", [])
-	if not (events_value is Array):
+	var beats_value: Variant = data.get("beats", [])
+	if not (beats_value is Array):
 		issues.append({
-			"code": "chart_events_not_array",
-			"field": "events",
-			"message": "Chart events must be an array.",
+			"code": "chart_beats_not_array",
+			"field": "beats",
+			"message": "Chart beats must be an array.",
 		})
 		return issues
-	var events: Array = events_value
-	for index in range(events.size()):
-		var event_value: Variant = events[index]
-		if not (event_value is Dictionary):
+	var beats: Array = beats_value
+	for index in range(beats.size()):
+		var beat_value: Variant = beats[index]
+		if not (beat_value is Dictionary):
 			issues.append({
-				"code": "chart_event_not_object",
-				"field": "events[%d]" % index,
+				"code": "chart_beat_not_object",
+				"field": "beats[%d]" % index,
 				"index": index,
-				"message": "Each chart event must be an object.",
+				"message": "Each chart beat must be an object.",
 			})
 			continue
-		var event: Dictionary = event_value
-		if not event.has("beat"):
+		var beat: Dictionary = beat_value
+		if not beat.has("start"):
 			issues.append({
-				"code": "chart_event_missing_beat",
-				"field": "events[%d].beat" % index,
+				"code": "chart_beat_missing_start",
+				"field": "beats[%d].start" % index,
 				"index": index,
-				"message": "Each chart event must declare a beat.",
+				"message": "Each chart beat must declare a start beat value.",
 			})
-		var type := String(event.get("type", ""))
+		elif not _is_number(beat.get("start")):
+			issues.append({
+				"code": "chart_beat_invalid_start",
+				"field": "beats[%d].start" % index,
+				"index": index,
+				"message": "Chart beat start must be numeric.",
+			})
+		if beat.has("end") and not _is_number(beat.get("end")):
+			issues.append({
+				"code": "chart_beat_invalid_end",
+				"field": "beats[%d].end" % index,
+				"index": index,
+				"message": "Chart beat end must be numeric when present.",
+			})
+		var type := String(beat.get("type", ""))
 		if type.is_empty():
 			issues.append({
-				"code": "chart_event_missing_type",
-				"field": "events[%d].type" % index,
+				"code": "chart_beat_missing_type",
+				"field": "beats[%d].type" % index,
 				"index": index,
-				"message": "Each chart event must declare a type.",
+				"message": "Each chart beat must declare a type.",
 			})
 			continue
 		match feature:
 			"boxing":
-				issues.append_array(_validate_boxing_event(type, index))
+				issues.append_array(_validate_boxing_beat(type, index))
 			"flow":
-				issues.append_array(_validate_flow_event(event, index))
+				issues.append_array(_validate_flow_beat(beat, index))
 	return issues
 
-static func _validate_boxing_event(type: String, index: int) -> Array[Dictionary]:
+static func _validate_boxing_beat(type: String, index: int) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
 	if BOXING_LEGACY_TYPE_REPLACEMENTS.has(type):
 		issues.append({
 			"code": "invalid_boxing_type",
-			"field": "events[%d].type" % index,
+			"field": "beats[%d].type" % index,
 			"index": index,
-			"message": "Boxing event type '%s' is legacy. Use '%s' to match the input-truth chart contract." % [type, BOXING_LEGACY_TYPE_REPLACEMENTS[type]],
+			"message": "Boxing beat type '%s' is legacy. Use '%s' to match the canonical authored chart contract." % [type, BOXING_LEGACY_TYPE_REPLACEMENTS[type]],
 		})
 	elif type in BOXING_AUTHORED_STANCE_TYPES:
-		issues.append({
-			"code": "invalid_boxing_stance_event",
-			"field": "events[%d].type" % index,
-			"index": index,
-			"message": "Boxing stance label '%s' is authored chart semantics, not a tracked input event." % type,
-		})
+		pass
 	return issues
 
-static func _validate_flow_event(event: Dictionary, index: int) -> Array[Dictionary]:
+static func _validate_flow_beat(beat: Dictionary, index: int) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
-	if event.has("placement") and not (event.get("placement") is int):
+	if beat.has("placement") and not (beat.get("placement") is int):
 		issues.append({
-			"code": "flow_event_invalid_placement",
-			"field": "events[%d].placement" % index,
+			"code": "flow_beat_invalid_placement",
+			"field": "beats[%d].placement" % index,
 			"index": index,
-			"message": "Flow event placement must be an integer pass-through location.",
+			"message": "Flow beat placement must be an integer pass-through location.",
 		})
-	if event.has("direction"):
-		if not event.has("placement"):
+	if beat.has("direction"):
+		if not beat.has("placement"):
 			issues.append({
-				"code": "flow_event_missing_placement",
-				"field": "events[%d].direction" % index,
+				"code": "flow_beat_missing_placement",
+				"field": "beats[%d].direction" % index,
 				"index": index,
 				"message": "Flow direction is follow-through guidance and must not replace placement.",
 			})
-		if not (event.get("direction") is int):
+		if not (beat.get("direction") is int):
 			issues.append({
-				"code": "flow_event_invalid_direction",
-				"field": "events[%d].direction" % index,
+				"code": "flow_beat_invalid_direction",
+				"field": "beats[%d].direction" % index,
 				"index": index,
-				"message": "Flow event direction must be an integer follow-through hint.",
+				"message": "Flow beat direction must be an integer follow-through hint.",
 			})
 	return issues
+
+static func _is_number(value: Variant) -> bool:
+	return value is int or value is float

@@ -1,6 +1,6 @@
 # aerobeat-content-core
 
-Canonical AeroBeat authored-content contracts for the downscoped v1 package model: Songs, Charts, Sets, Workouts, Coach Configs, Environments, shared chart-envelope types, and lightweight package validation helpers.
+Canonical AeroBeat authored-content contracts for the downscoped v1 package model: Songs, Charts, Sets, Workouts, Coach Configs, Environments, shared chart-envelope types, and lightweight package validation helpers. Charts now validate the docs-aligned `beats` envelope directly, without requiring legacy `interactionFamily`.
 
 ## Architecture role
 
@@ -21,7 +21,7 @@ Key rules:
 
 - official gameplay features are **boxing** and **flow**
 - Boxing straight-punch chart types are `punch_left` / `punch_right`; `guard` is canonical wording
-- `orthodox` / `southpaw` are authored stance semantics, not tracked input-event vocabulary
+- `orthodox` / `southpaw` are valid authored Boxing stance semantics, even though they are not tracked input-event vocabulary
 - Flow keeps `placement` = pass-through location and optional `direction` = follow-through guidance
 - **dance** and **step** are not valid shared content-core feature values
 - **Set** is the package-local composition linker between one song, one chart, one environment, and optional coaching overlay selection
@@ -59,7 +59,7 @@ The suite covers:
 
 - valid minimal boxing package acceptance under the set-centered contract
 - rejection of legacy Boxing punch labels such as `jab`, `cross`, `jab_left`, and `cross_right`
-- rejection of Boxing stance labels when they are authored as tracked input events
+- acceptance of Boxing stance labels as authored chart semantics
 - preservation of Flow `placement` vs `direction` chart-field semantics
 - rejection of missing set/song references
 - rejection of forbidden legacy manifest fields such as `routines`, `assets`, and `assetSelections`

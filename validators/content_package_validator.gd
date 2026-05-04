@@ -8,7 +8,6 @@ const ContentFeature = preload("res://../globals/content_feature.gd")
 const ContentPackageManifest = preload("res://../data_types/content_package_manifest.gd")
 const ContentValidationIssue = preload("res://../validators/content_validation_issue.gd")
 const ContentValidationResult = preload("res://../validators/content_validation_result.gd")
-const InteractionFamily = preload("res://../globals/interaction_family.gd")
 const Song = preload("res://../data_types/song.gd")
 const Chart = preload("res://../data_types/chart.gd")
 const ContentSet = preload("res://../data_types/content_set.gd")
@@ -165,13 +164,6 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 					"invalid_difficulty",
 					ContentValidationIssue.SEVERITY_ERROR,
 					"Chart difficulty must be one of easy/medium/hard/pro.",
-					path
-				))
-			if not InteractionFamily.is_valid(String(data.get("interactionFamily", ""))):
-				result.add_issue(ContentValidationIssue.create(
-					"invalid_interaction_family",
-					ContentValidationIssue.SEVERITY_ERROR,
-					"Chart interactionFamily must be one of the canonical interaction families.",
 					path
 				))
 		if kind == "environment":
