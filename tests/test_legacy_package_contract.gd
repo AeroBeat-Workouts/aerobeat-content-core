@@ -5,7 +5,7 @@ const ContentPackageValidator = preload("res://../validators/content_package_val
 static func run() -> Dictionary:
 	var validator := ContentPackageValidator.new()
 	var fixture_path := ProjectSettings.globalize_path("res://../fixtures/invalid_legacy_manifest_fields")
-	var result := validator.validate_fixture_package(fixture_path)
+	var result := validator.validate_legacy_manifest_fixture_package(fixture_path)
 	var codes: Array[String] = []
 	for issue in result.issues:
 		codes.append(String(issue.get("code", "")))
@@ -19,7 +19,7 @@ static func run() -> Dictionary:
 		]
 	)
 	return {
-		"name": "legacy_package_contract",
+		"name": "legacy_manifest_field_rejection",
 		"passed": passed,
 		"details": result.to_dict(),
 	}

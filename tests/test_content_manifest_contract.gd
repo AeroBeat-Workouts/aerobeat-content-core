@@ -5,15 +5,15 @@ const ContentPackageValidator = preload("res://../validators/content_package_val
 static func run() -> Dictionary:
 	var validator := ContentPackageValidator.new()
 	var fixture_path := ProjectSettings.globalize_path("res://../fixtures/package_minimal_boxing")
-	var result := validator.validate_fixture_package(fixture_path)
+	var result := validator.validate_legacy_manifest_fixture_package(fixture_path)
 	if not result.is_valid():
 		return {
-			"name": "content_manifest_contract",
+			"name": "legacy_manifest_fixture_contract",
 			"passed": false,
 			"details": result.to_dict(),
 		}
 	return {
-		"name": "content_manifest_contract",
+		"name": "legacy_manifest_fixture_contract",
 		"passed": true,
 		"details": {
 			"issues": [],

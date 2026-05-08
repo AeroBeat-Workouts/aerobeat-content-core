@@ -1,6 +1,9 @@
 class_name ContentPackageValidator
 extends RefCounted
 
+# Canonical authored package truth now lives in workout.yaml-centered YAML docs.
+# This validator is a transitional JSON-fixture harness that still exercises the
+# shared record/reference rules through a legacy manifest.json package index.
 const AeroContentSchema = preload("res://../globals/aero_content_schema.gd")
 const ContentDifficulty = preload("res://../globals/content_difficulty.gd")
 const ContentId = preload("res://../data_types/content_id.gd")
@@ -16,6 +19,9 @@ const CoachConfig = preload("res://../data_types/coach_config.gd")
 const EnvironmentRecord = preload("res://../data_types/environment.gd")
 
 func validate_fixture_package(package_dir: String) -> ContentValidationResult:
+	return validate_legacy_manifest_fixture_package(package_dir)
+
+func validate_legacy_manifest_fixture_package(package_dir: String) -> ContentValidationResult:
 	var manifest_path := package_dir.path_join("manifest.json")
 	var manifest := _load_json(manifest_path)
 	if manifest.is_empty():
@@ -23,7 +29,7 @@ func validate_fixture_package(package_dir: String) -> ContentValidationResult:
 		missing_result.add_issue(ContentValidationIssue.create(
 			"manifest_missing",
 			ContentValidationIssue.SEVERITY_ERROR,
-			"Package manifest could not be loaded.",
+			"Legacy manifest.json fixture package could not be loaded.",
 			manifest_path
 		))
 		return missing_result

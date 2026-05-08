@@ -1,6 +1,9 @@
 class_name ContentPackageManifest
 extends RefCounted
 
+# Transitional helper for the legacy manifest.json fixture format used by this
+# repo's current Godot contract tests. The canonical authored package contract
+# is workout.yaml-centered and documented in aerobeat-docs.
 const REQUIRED_FIELDS := ["schema", "packageId", "packageVersion", "songs", "charts", "sets", "workouts", "coaches", "environments"]
 const FORBIDDEN_FIELDS := ["routines", "assets", "assetSelections"]
 
