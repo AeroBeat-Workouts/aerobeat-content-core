@@ -5,9 +5,9 @@ const ChartEnvelope = preload("res://../data_types/chart_envelope.gd")
 
 const BOXING_LEGACY_TYPE_REPLACEMENTS := {
 	"jab": "punch_left",
-	"cross": "punch_right",
+	"cross": "hook_right",
 	"jab_left": "punch_left",
-	"cross_right": "punch_right",
+	"cross_right": "hook_right",
 }
 
 const BOXING_AUTHORED_STANCE_TYPES := ["orthodox", "southpaw"]
