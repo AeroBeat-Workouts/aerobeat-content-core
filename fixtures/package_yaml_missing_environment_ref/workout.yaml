@@ -1,0 +1,12 @@
+schemaId: aerobeat.workout-package.v1
+schemaVersion: 1
+recordVersion: 1
+workoutId: ab-workout-splat-demo
+workoutName: Splat Demo Workout
+description: >-
+  Minimal canonical workout.yaml package fixture used to validate the YAML bridge
+  path in aerobeat-content-core.
+packageVersion: 1.0.0
+coachConfigId: ab-coach-config-splat-demo
+setOrder:
+  - ab-set-splat-demo-round

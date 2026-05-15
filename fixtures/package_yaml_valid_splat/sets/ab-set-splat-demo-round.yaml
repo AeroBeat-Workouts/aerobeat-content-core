@@ -1,0 +1,9 @@
+schemaId: aerobeat.set.v1
+schemaVersion: 1
+recordVersion: 1
+setId: ab-set-splat-demo-round
+setName: Splat Demo Round
+songId: ab-song-splat-demo
+chartId: ab-chart-splat-demo-boxing-medium
+environmentId: ab-environment-splat-demo
+coachingOverlayId: ab-overlay-splat-demo

@@ -12,6 +12,7 @@ const TEST_SCRIPTS := [
 	preload("res://../tests/test_workout_set_contract.gd"),
 	preload("res://../tests/test_workout_resolution_contract.gd"),
 	preload("res://../tests/test_workout_resolution_validation.gd"),
+	preload("res://../tests/test_workout_yaml_package_contract.gd"),
 ]
 
 func _initialize() -> void:

@@ -2,8 +2,10 @@ class_name ContentPackageValidator
 extends RefCounted
 
 # Canonical authored package truth now lives in workout.yaml-centered YAML docs.
-# This validator is a transitional JSON-fixture harness that still exercises the
-# shared record/reference rules through a legacy manifest.json package index.
+# The checked-in JSON manifest fixtures still exist as a transitional compatibility
+# harness, but this validator now also includes a narrow canonical workout.yaml
+# package bridge that loads the YAML package graph and normalizes it onto the
+# shared record/reference checks below.
 const AeroContentSchema = preload("res://../globals/aero_content_schema.gd")
 const ContentDifficulty = preload("res://../globals/content_difficulty.gd")
 const ContentId = preload("res://../data_types/content_id.gd")
@@ -17,9 +19,19 @@ const ContentSet = preload("res://../data_types/content_set.gd")
 const Workout = preload("res://../data_types/workout.gd")
 const CoachConfig = preload("res://../data_types/coach_config.gd")
 const EnvironmentRecord = preload("res://../data_types/environment.gd")
+const SimpleYamlParser = preload("res://../validators/simple_yaml_parser.gd")
 
 func validate_fixture_package(package_dir: String) -> ContentValidationResult:
+	if FileAccess.file_exists(package_dir.path_join("workout.yaml")):
+		return validate_workout_yaml_package(package_dir)
 	return validate_legacy_manifest_fixture_package(package_dir)
+
+func validate_workout_yaml_package(package_dir: String) -> ContentValidationResult:
+	var package_result := _load_workout_yaml_package_data(package_dir)
+	var load_result: ContentValidationResult = package_result.get("result", ContentValidationResult.new())
+	if not load_result.is_valid():
+		return load_result
+	return validate_package_data(package_result.get("package_data", {}))
 
 func validate_legacy_manifest_fixture_package(package_dir: String) -> ContentValidationResult:
 	var manifest_path := package_dir.path_join("manifest.json")
@@ -56,6 +68,137 @@ func validate_package_data(package_data: Dictionary) -> ContentValidationResult:
 	_validate_records(package_data.get("environments", []), EnvironmentRecord, "environment", result)
 	_validate_references(package_data, result)
 	return result
+
+func _load_workout_yaml_package_data(package_dir: String) -> Dictionary:
+	var result := ContentValidationResult.new()
+	var workout_path := package_dir.path_join("workout.yaml")
+	var root_record := _load_yaml(workout_path)
+	if root_record.is_empty():
+		result.add_issue(ContentValidationIssue.create(
+			"workout_yaml_missing",
+			ContentValidationIssue.SEVERITY_ERROR,
+			"Canonical workout.yaml package could not be loaded.",
+			workout_path
+		))
+		return {"result": result, "package_data": {}}
+	var songs := _load_yaml_records_from_dir(package_dir, "songs")
+	var charts := _load_yaml_records_from_dir(package_dir, "charts")
+	var sets := _load_yaml_records_from_dir(package_dir, "sets")
+	var coaches := _load_yaml_records_from_dir(package_dir, "coaches")
+	var environments := _load_yaml_records_from_dir(package_dir, "environments")
+	var root_workout := _normalize_yaml_workout_record(root_record)
+	var manifest := {
+		"schema": AeroContentSchema.PACKAGE_MANIFEST_V1,
+		"packageId": String(root_workout.get("workoutId", package_dir.get_file())),
+		"packageVersion": String(root_record.get("packageVersion", "")),
+		"songs": _manifest_entries_for_records(songs),
+		"charts": _manifest_entries_for_records(charts),
+		"sets": _manifest_entries_for_records(sets),
+		"workouts": [{"path": "workout.yaml"}],
+		"coaches": _manifest_entries_for_records(coaches),
+		"environments": _manifest_entries_for_records(environments),
+	}
+	return {
+		"result": result,
+		"package_data": {
+			"manifest": manifest,
+			"songs": songs,
+			"charts": charts,
+			"sets": sets,
+			"workouts": [{"path": "workout.yaml", "data": root_workout}],
+			"coaches": coaches,
+			"environments": environments,
+		},
+	}
+
+func _manifest_entries_for_records(records: Array) -> Array:
+	var entries: Array = []
+	for record in records:
+		entries.append({"path": String(record.get("path", ""))})
+	return entries
+
+func _load_yaml_records_from_dir(package_dir: String, relative_dir: String) -> Array[Dictionary]:
+	var records: Array[Dictionary] = []
+	var absolute_dir := package_dir.path_join(relative_dir)
+	if not DirAccess.dir_exists_absolute(absolute_dir):
+		return records
+	var dir := DirAccess.open(absolute_dir)
+	if dir == null:
+		return records
+	var file_names: Array[String] = []
+	dir.list_dir_begin()
+	while true:
+		var file_name := dir.get_next()
+		if file_name.is_empty():
+			break
+		if dir.current_is_dir():
+			continue
+		if file_name.ends_with(".yaml") or file_name.ends_with(".yml"):
+			file_names.append(file_name)
+	dir.list_dir_end()
+	file_names.sort()
+	var kind := _yaml_dir_kind(relative_dir)
+	for file_name in file_names:
+		var relative_path := relative_dir.path_join(file_name)
+		var absolute_path := package_dir.path_join(relative_path)
+		records.append({
+			"path": relative_path,
+			"data": _normalize_yaml_record(_load_yaml(absolute_path), kind),
+		})
+	return records
+
+func _normalize_yaml_workout_record(record: Dictionary) -> Dictionary:
+	var normalized := record.duplicate(true)
+	normalized["schema"] = AeroContentSchema.WORKOUT_V1
+	return normalized
+
+func _normalize_yaml_record(record: Dictionary, kind: String) -> Dictionary:
+	var normalized := record.duplicate(true)
+	if normalized.is_empty():
+		return normalized
+	if normalized.has("schemaId"):
+		normalized["schema"] = _normalized_schema_for_record(kind, String(normalized.get("schemaId", "")))
+	if kind == "song":
+		var audio_value: Variant = normalized.get("audio", {})
+		if audio_value is Dictionary:
+			var audio := Dictionary(audio_value).duplicate(true)
+			if audio.has("filePath") and not audio.has("resourcePath"):
+				audio["resourcePath"] = audio.get("filePath")
+			normalized["audio"] = audio
+			if not normalized.has("durationSec") and audio.has("durationMs"):
+				var duration_ms := float(audio.get("durationMs", 0))
+				normalized["durationSec"] = int(ceili(duration_ms / 1000.0))
+	return normalized
+
+func _normalized_schema_for_record(kind: String, schema_id: String) -> String:
+	match kind:
+		"song":
+			return AeroContentSchema.SONG_V1
+		"chart":
+			return AeroContentSchema.CHART_V1
+		"set":
+			return AeroContentSchema.SET_V1
+		"coach_config":
+			return AeroContentSchema.COACH_CONFIG_V1
+		"environment":
+			return AeroContentSchema.ENVIRONMENT_V1
+		_:
+			return schema_id
+
+func _yaml_dir_kind(relative_dir: String) -> String:
+	match relative_dir:
+		"songs":
+			return "song"
+		"charts":
+			return "chart"
+		"sets":
+			return "set"
+		"coaches":
+			return "coach_config"
+		"environments":
+			return "environment"
+		_:
+			return relative_dir
 
 func _validate_manifest(manifest: Dictionary, result: ContentValidationResult) -> void:
 	for field in ContentPackageManifest.validate_shape(manifest):
@@ -319,6 +462,13 @@ func _load_json(path: String) -> Dictionary:
 		return {}
 	var text := FileAccess.get_file_as_string(path)
 	var parsed: Variant = JSON.parse_string(text)
+	if parsed == null or not (parsed is Dictionary):
+		return {}
+	return parsed
+
+func _load_yaml(path: String) -> Dictionary:
+	var parser := SimpleYamlParser.new()
+	var parsed: Variant = parser.parse_file(path)
 	if parsed == null or not (parsed is Dictionary):
 		return {}
 	return parsed

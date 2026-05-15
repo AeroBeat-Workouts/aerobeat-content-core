@@ -37,14 +37,14 @@ For the source-of-truth package layout and authored-file examples, see the docs 
 
 ## Important current limitation
 
-This repo's checked-in Godot validator/test harness is **not yet a full validator for the canonical workout.yaml YAML package format**.
+This repo's checked-in Godot validator/test harness is **still not a full end-to-end validator for the canonical workout.yaml YAML package format**.
 
-Today it still validates a **transitional legacy fixture shape** built around:
+It now supports a **narrow canonical workout.yaml package bridge** in addition to the older transitional fixture path:
 
-- `manifest.json`
-- JSON record files referenced by that manifest
+- **Canonical bridge:** loads one root `workout.yaml` plus `songs/`, `charts/`, `sets/`, `coaches/`, and `environments/` YAML records, then normalizes that package graph onto the shared content-core structural/reference checks
+- **Transitional fixture layer:** `manifest.json` plus JSON record files referenced by that manifest
 
-That harness is still useful because it exercises the same shared structural rules around ids, features, set/workout relationships, coaching overlay references, environments, and forbidden legacy fields. But it should be treated as a **transitional compatibility fixture layer**, not as the canonical authored-package format.
+That means the repo can now truthfully validate the canonical YAML path for shared concerns such as ids, set/workout/environment linking, coach overlay references, and environment-type acceptance including `splat`. It does **not** yet claim a total workout-package validator rewrite: YAML parsing/normalization is intentionally narrow and exists to bridge the canonical package shape onto the existing shared contract checks rather than replacing the entire transitional harness.
 
 ## Repository scope
 
@@ -75,6 +75,7 @@ godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
 
 Current suite coverage:
 
+- valid canonical `workout.yaml` fixture acceptance for the shared set-centered rules, including `splat` environments and set/environment linking
 - valid transitional legacy-manifest fixture acceptance for the shared set-centered rules
 - environment-type contract coverage including the controlled advanced `splat` path
 - rejection of legacy Boxing punch labels such as `jab`, `cross`, `jab_left`, and `cross_right`
@@ -92,6 +93,6 @@ Status today:
 
 - **shared record semantics:** aligned with the downscoped set-centered v1 model
 - **canonical authored-package docs:** live in `aerobeat-docs` and are workout.yaml/YAML-centered
-- **repo-local validator harness:** still legacy `manifest.json`/JSON-fixture based and explicitly transitional
+- **repo-local validator harness:** now split between a narrow canonical workout.yaml YAML bridge and the older legacy `manifest.json`/JSON-fixture compatibility path
 
-The next meaningful validator step, when intentionally scoped, is replacing or supplementing the legacy manifest harness with real workout.yaml/YAML package validation rather than silently treating the current fixture format as canonical.
+The next meaningful validator step, when intentionally scoped, is broadening this bridge into a more complete workout-package YAML validator rather than silently pretending the bridge already replaces the full import/export toolchain.

@@ -1,0 +1,7 @@
+schemaId: aerobeat.environment.v1
+schemaVersion: 1
+recordVersion: 1
+environmentId: ab-environment-splat-demo
+environmentName: Splat Demo Environment
+type: hologram
+resourcePath: media/environments/demo.splat
