@@ -2,7 +2,7 @@ class_name EnvironmentRecord
 extends RefCounted
 
 const REQUIRED_FIELDS := ["schema", "environmentId", "environmentName", "type", "resourcePath"]
-const VALID_TYPES := ["image_background", "video_background", "glb_environment"]
+const VALID_TYPES := ["image_background", "video_background", "glb_environment", "splat"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	var missing: Array[String] = []
@@ -17,7 +17,7 @@ static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 	if not environment_type.is_empty() and not (environment_type in VALID_TYPES):
 		issues.append({
 			"code": "invalid_environment_type",
-			"message": "Environment type must be one of image_background/video_background/glb_environment.",
+			"message": "Environment type must be one of image_background/video_background/glb_environment/splat.",
 			"field": "type",
 		})
 	return issues

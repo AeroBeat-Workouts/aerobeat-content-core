@@ -27,6 +27,7 @@ Key rules carried by this repo's shared types/validation semantics:
 - Flow keeps `placement` = pass-through location and optional `direction` = follow-through guidance
 - **dance** and **step** are not valid shared content-core feature values
 - **Set** is the package-local composition linker between one song, one chart, one environment, and optional coaching overlay selection
+- environment records officially accept `image_background`, `video_background`, `glb_environment`, and the controlled advanced `splat` type
 - **Workout** sequences ordered `setId` values
 - coaching remains valid through workout-level coach-config content
 - package-local gameplay `assets` and `assetSelections` are not part of the active v1 contract
@@ -75,6 +76,7 @@ godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
 Current suite coverage:
 
 - valid transitional legacy-manifest fixture acceptance for the shared set-centered rules
+- environment-type contract coverage including the controlled advanced `splat` path
 - rejection of legacy Boxing punch labels such as `jab`, `cross`, `jab_left`, and `cross_right`
 - acceptance of Boxing stance labels as authored chart semantics
 - preservation of Flow `placement` vs `direction` chart-field semantics

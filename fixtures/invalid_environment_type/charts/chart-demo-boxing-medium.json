@@ -1,0 +1,17 @@
+{
+  "schema": "aerobeat.content.chart.v1",
+  "chartId": "chart_demo_boxing_medium",
+  "chartName": "Demo Boxing Medium",
+  "feature": "boxing",
+  "difficulty": "medium",
+  "beats": [
+    {
+      "start": 1.0,
+      "type": "punch_left"
+    },
+    {
+      "start": 2.0,
+      "type": "punch_right"
+    }
+  ]
+}

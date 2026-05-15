@@ -2,6 +2,6 @@
   "schema": "aerobeat.content.environment.v1",
   "environmentId": "environment_demo_gym",
   "environmentName": "Demo Gym",
-  "type": "splat",
+  "type": "planet_hologram",
   "resourcePath": "media/environments/demo-gym.splat"
 }

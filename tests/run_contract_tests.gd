@@ -4,6 +4,7 @@ const TEST_SCRIPTS := [
 	preload("res://../tests/test_content_manifest_contract.gd"),
 	preload("res://../tests/test_content_reference_validation.gd"),
 	preload("res://../tests/test_content_feature_contract.gd"),
+	preload("res://../tests/test_environment_contract.gd"),
 	preload("res://../tests/test_chart_event_contract.gd"),
 	preload("res://../tests/test_legacy_package_contract.gd"),
 	preload("res://../tests/test_song_timing_contract.gd"),
