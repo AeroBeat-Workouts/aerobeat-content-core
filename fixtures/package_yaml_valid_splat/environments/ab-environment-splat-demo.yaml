@@ -4,4 +4,4 @@ recordVersion: 1
 environmentId: ab-environment-splat-demo
 environmentName: Splat Demo Environment
 type: splat
-resourcePath: media/environments/demo.splat
+resourcePath: media/environments/demo.compressed.ply

@@ -27,7 +27,7 @@ Key rules carried by this repo's shared types/validation semantics:
 - Flow keeps `placement` = pass-through location and optional `direction` = follow-through guidance
 - **dance** and **step** are not valid shared content-core feature values
 - **Set** is the package-local composition linker between one song, one chart, one environment, and optional coaching overlay selection
-- environment records officially accept `image_background`, `video_background`, `glb_environment`, and the controlled advanced `splat` type
+- environment records officially accept `image_background`, `video_background`, `glb_environment`, and the controlled advanced `splat` type; for splats, AeroBeat officially recommends `.compressed.ply`, while GDGS compatibility support remains available for `.ply`, `.splat`, and `.sog` assets only
 - **Workout** sequences ordered `setId` values
 - coaching remains valid through workout-level coach-config content
 - package-local gameplay `assets` and `assetSelections` are not part of the active v1 contract
@@ -44,7 +44,7 @@ It now supports a **narrow canonical workout.yaml package bridge** in addition t
 - **Canonical bridge:** loads one root `workout.yaml` plus `songs/`, `charts/`, `sets/`, `coaches/`, and `environments/` YAML records, then normalizes that package graph onto the shared content-core structural/reference checks
 - **Transitional fixture layer:** `manifest.json` plus JSON record files referenced by that manifest
 
-That means the repo can now truthfully validate the canonical YAML path for shared concerns such as ids, set/workout/environment linking, coach overlay references, and environment-type acceptance including `splat`. It does **not** yet claim a total workout-package validator rewrite: YAML parsing/normalization is intentionally narrow and exists to bridge the canonical package shape onto the existing shared contract checks rather than replacing the entire transitional harness.
+That means the repo can now truthfully validate the canonical YAML path for shared concerns such as ids, set/workout/environment linking, coach overlay references, and environment-type acceptance including `splat`. For `splat` environments specifically, the shared contract now reflects the current format policy: `.compressed.ply` is the official recommended AeroBeat authored path, while `.ply`, `.splat`, and `.sog` remain compatibility-supported through GDGS. It does **not** yet claim a total workout-package validator rewrite: YAML parsing/normalization is intentionally narrow and exists to bridge the canonical package shape onto the existing shared contract checks rather than replacing the entire transitional harness.
 
 ## Repository scope
 
@@ -75,9 +75,9 @@ godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
 
 Current suite coverage:
 
-- valid canonical `workout.yaml` fixture acceptance for the shared set-centered rules, including `splat` environments and set/environment linking
+- valid canonical `workout.yaml` fixture acceptance for the shared set-centered rules, including `splat` environments using the recommended `.compressed.ply` path and set/environment linking
 - valid transitional legacy-manifest fixture acceptance for the shared set-centered rules
-- environment-type contract coverage including the controlled advanced `splat` path
+- environment-type and splat resource-format contract coverage, including the recommended `.compressed.ply` path plus compatibility acceptance for `.ply`, `.splat`, and `.sog`, while rejecting unsupported formats such as `.spz`
 - rejection of legacy Boxing punch labels such as `jab`, `cross`, `jab_left`, and `cross_right`
 - acceptance of Boxing stance labels as authored chart semantics
 - preservation of Flow `placement` vs `direction` chart-field semantics

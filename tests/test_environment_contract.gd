@@ -11,9 +11,36 @@ static func run() -> Dictionary:
 	for issue in invalid_result.issues:
 		issue_codes.append(String(issue.get("code", "")))
 	issue_codes.sort()
+	var recommended_splat_issues := EnvironmentRecord.validate_contract({
+		"type": "splat",
+		"resourcePath": "media/environments/demo.compressed.ply",
+	})
+	var compatible_ply_issues := EnvironmentRecord.validate_contract({
+		"type": "splat",
+		"resourcePath": "media/environments/demo.ply",
+	})
+	var compatible_splat_issues := EnvironmentRecord.validate_contract({
+		"type": "splat",
+		"resourcePath": "media/environments/demo.splat",
+	})
+	var compatible_sog_issues := EnvironmentRecord.validate_contract({
+		"type": "splat",
+		"resourcePath": "media/environments/demo.sog",
+	})
+	var unsupported_spz_issues := EnvironmentRecord.validate_contract({
+		"type": "splat",
+		"resourcePath": "media/environments/demo.spz",
+	})
 	var passed := (
 		EnvironmentRecord.VALID_TYPES == ["image_background", "video_background", "glb_environment", "splat"]
-		and EnvironmentRecord.validate_contract({"type": "splat"}).is_empty()
+		and EnvironmentRecord.RECOMMENDED_SPLAT_RESOURCE_SUFFIX == ".compressed.ply"
+		and EnvironmentRecord.SUPPORTED_SPLAT_RESOURCE_SUFFIXES == [".compressed.ply", ".ply", ".splat", ".sog"]
+		and recommended_splat_issues.is_empty()
+		and compatible_ply_issues.is_empty()
+		and compatible_splat_issues.is_empty()
+		and compatible_sog_issues.is_empty()
+		and unsupported_spz_issues.size() == 1
+		and String(unsupported_spz_issues[0].get("code", "")) == "invalid_splat_resource_path"
 		and issue_codes == ["invalid_environment_type"]
 	)
 	return {
@@ -21,7 +48,13 @@ static func run() -> Dictionary:
 		"passed": passed,
 		"details": {
 			"allowed": EnvironmentRecord.VALID_TYPES,
-			"splatIssues": EnvironmentRecord.validate_contract({"type": "splat"}),
+			"recommendedSplatSuffix": EnvironmentRecord.RECOMMENDED_SPLAT_RESOURCE_SUFFIX,
+			"supportedSplatSuffixes": EnvironmentRecord.SUPPORTED_SPLAT_RESOURCE_SUFFIXES,
+			"recommendedSplatIssues": recommended_splat_issues,
+			"compatiblePlyIssues": compatible_ply_issues,
+			"compatibleSplatIssues": compatible_splat_issues,
+			"compatibleSogIssues": compatible_sog_issues,
+			"unsupportedSpzIssues": unsupported_spz_issues,
 			"invalidFixtureIssues": invalid_result.to_dict(),
 		},
 	}
