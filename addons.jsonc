@@ -2,5 +2,10 @@
   "$schema": "https://chickensoft.games/schemas/addons.schema.json",
   "addons": {
     // Day-one scaffold intentionally stays dependency-light.
+    "aerobeat-tool-headless-manager": {
+      "url": "../aerobeat-tool-headless-manager",
+      "subfolder": "/",
+      "source": "symlink"
+    }
   }
 }
