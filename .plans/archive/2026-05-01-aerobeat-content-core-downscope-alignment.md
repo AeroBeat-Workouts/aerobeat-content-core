@@ -1,7 +1,7 @@
 # AeroBeat Content Core Downscope Alignment
 
 **Date:** 2026-05-01  
-**Status:** In Progress  
+**Status:** Stale  
 **Agent:** Chip 🐱‍💻
 
 ---

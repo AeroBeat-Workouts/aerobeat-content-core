@@ -1,7 +1,7 @@
 # AeroBeat Content Core + Content Authoring — Definition Phase
 
 **Date:** 2026-04-23  
-**Status:** Draft  
+**Status:** Stale  
 **Agent:** Chip 🐱‍💻
 
 ---
