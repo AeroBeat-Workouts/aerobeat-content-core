@@ -26,4 +26,9 @@ mono_crash.*.json
 CLAUDE.md
 AGENTS.md
 
+# GodotEnv package workbench
+.testbed/addons/*
+!.testbed/addons/.editorconfig
+.testbed/.addons/
+
 .testbed/.headless/
