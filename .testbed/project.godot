@@ -4,3 +4,7 @@ config_version=5
 
 config/name="AeroBeat Content Core Testbed"
 config/features=PackedStringArray("4.6", "Forward Plus")
+
+[autoload]
+
+AeroHeadlessManager="*res://addons/aerobeat-tool-headless-manager/src/AeroHeadlessManager.gd"

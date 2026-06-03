@@ -25,3 +25,5 @@ mono_crash.*.json
 .claude/
 CLAUDE.md
 AGENTS.md
+
+.testbed/.headless/
