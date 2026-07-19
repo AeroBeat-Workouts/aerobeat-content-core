@@ -1,16 +1,19 @@
 class_name Chart
 extends RefCounted
 
-const ChartEnvelope = preload("res://../data_types/chart_envelope.gd")
+const ChartEnvelope = preload("res://addons/aerobeat-content-core/data_types/chart_envelope.gd")
 
 const BOXING_LEGACY_TYPE_REPLACEMENTS := {
-	"jab": "punch_left",
-	"cross": "hook_right",
-	"jab_left": "punch_left",
-	"cross_right": "hook_right",
+	"jab": "straight_left",
+	"cross": "straight_right",
+	"jab_left": "straight_left",
+	"cross_right": "straight_right",
+	"punch_left": "straight_left",
+	"punch_right": "straight_right",
 }
 
 const BOXING_AUTHORED_STANCE_TYPES := ["orthodox", "southpaw"]
+const FLOW_BURST_HAND_VALUES := ["left", "right"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	return ChartEnvelope.validate_shape(data)
@@ -70,12 +73,12 @@ static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 			continue
 		match feature:
 			"boxing":
-				issues.append_array(_validate_boxing_beat(type, index))
+				issues.append_array(_validate_boxing_beat(beat, type, index))
 			"flow":
-				issues.append_array(_validate_flow_beat(beat, index))
+				issues.append_array(_validate_flow_beat(beat, type, index))
 	return issues
 
-static func _validate_boxing_beat(type: String, index: int) -> Array[Dictionary]:
+static func _validate_boxing_beat(beat: Dictionary, type: String, index: int) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
 	if BOXING_LEGACY_TYPE_REPLACEMENTS.has(type):
 		issues.append({
@@ -86,32 +89,111 @@ static func _validate_boxing_beat(type: String, index: int) -> Array[Dictionary]
 		})
 	elif type in BOXING_AUTHORED_STANCE_TYPES:
 		pass
+	if beat.has("portal"):
+		issues.append({
+			"code": "invalid_boxing_portal",
+			"field": "beats[%d].portal" % index,
+			"index": index,
+			"message": "Boxing beat portal fields are stale. Use semantic Boxing beat types without portal-based authored placement.",
+		})
 	return issues
 
-static func _validate_flow_beat(beat: Dictionary, index: int) -> Array[Dictionary]:
+static func _validate_flow_beat(beat: Dictionary, type: String, index: int) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
-	if beat.has("placement") and not (beat.get("placement") is int):
+	if beat.has("portal"):
 		issues.append({
-			"code": "flow_beat_invalid_placement",
+			"code": "invalid_flow_portal",
+			"field": "beats[%d].portal" % index,
+			"index": index,
+			"message": "Flow beat portal fields are stale. The current Flow direction is direct calibrated 4x3 gameplay rather than portal-based authored placement.",
+		})
+	if type != "burst":
+		return issues
+	if not beat.has("end"):
+		issues.append({
+			"code": "flow_burst_missing_end",
+			"field": "beats[%d].end" % index,
+			"index": index,
+			"message": "Flow burst beats must declare an end beat value.",
+		})
+	var hand := String(beat.get("hand", ""))
+	if hand.is_empty():
+		issues.append({
+			"code": "flow_burst_missing_hand",
+			"field": "beats[%d].hand" % index,
+			"index": index,
+			"message": "Flow burst beats must declare a hand.",
+		})
+	elif not (hand in FLOW_BURST_HAND_VALUES):
+		issues.append({
+			"code": "flow_burst_invalid_hand",
+			"field": "beats[%d].hand" % index,
+			"index": index,
+			"message": "Flow burst hand must be 'left' or 'right'.",
+		})
+	if not beat.has("placement"):
+		issues.append({
+			"code": "flow_burst_missing_placement",
 			"field": "beats[%d].placement" % index,
 			"index": index,
-			"message": "Flow beat placement must be an integer pass-through location.",
+			"message": "Flow burst beats must declare a head placement cell.",
 		})
-	if beat.has("direction"):
-		if not beat.has("placement"):
-			issues.append({
-				"code": "flow_beat_missing_placement",
-				"field": "beats[%d].direction" % index,
-				"index": index,
-				"message": "Flow direction is follow-through guidance and must not replace placement.",
-			})
-		if not (beat.get("direction") is int):
-			issues.append({
-				"code": "flow_beat_invalid_direction",
-				"field": "beats[%d].direction" % index,
-				"index": index,
-				"message": "Flow beat direction must be an integer follow-through hint.",
-			})
+	elif not (beat.get("placement") is int):
+		issues.append({
+			"code": "flow_burst_invalid_placement",
+			"field": "beats[%d].placement" % index,
+			"index": index,
+			"message": "Flow burst placement must be an integer cell value.",
+		})
+	if not beat.has("direction"):
+		issues.append({
+			"code": "flow_burst_missing_direction",
+			"field": "beats[%d].direction" % index,
+			"index": index,
+			"message": "Flow burst beats must declare a head direction value.",
+		})
+	elif not (beat.get("direction") is int):
+		issues.append({
+			"code": "flow_burst_invalid_direction",
+			"field": "beats[%d].direction" % index,
+			"index": index,
+			"message": "Flow burst direction must be an integer value.",
+		})
+	if not beat.has("tailPlacement"):
+		issues.append({
+			"code": "flow_burst_missing_tail_placement",
+			"field": "beats[%d].tailPlacement" % index,
+			"index": index,
+			"message": "Flow burst beats must declare a tail placement cell.",
+		})
+	elif not (beat.get("tailPlacement") is int):
+		issues.append({
+			"code": "flow_burst_invalid_tail_placement",
+			"field": "beats[%d].tailPlacement" % index,
+			"index": index,
+			"message": "Flow burst tailPlacement must be an integer cell value.",
+		})
+	if not beat.has("checkpointCount"):
+		issues.append({
+			"code": "flow_burst_missing_checkpoint_count",
+			"field": "beats[%d].checkpointCount" % index,
+			"index": index,
+			"message": "Flow burst beats must declare a checkpointCount.",
+		})
+	elif not (beat.get("checkpointCount") is int) or int(beat.get("checkpointCount")) < 1:
+		issues.append({
+			"code": "flow_burst_invalid_checkpoint_count",
+			"field": "beats[%d].checkpointCount" % index,
+			"index": index,
+			"message": "Flow burst checkpointCount must be a positive integer.",
+		})
+	if beat.has("spacingBias") and not _is_number(beat.get("spacingBias")):
+		issues.append({
+			"code": "flow_burst_invalid_spacing_bias",
+			"field": "beats[%d].spacingBias" % index,
+			"index": index,
+			"message": "Flow burst spacingBias must be numeric when present.",
+		})
 	return issues
 
 static func _is_number(value: Variant) -> bool:

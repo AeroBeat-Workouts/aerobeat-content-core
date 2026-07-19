@@ -1,7 +1,7 @@
 class_name ContentReference
 extends RefCounted
 
-const ContentId = preload("res://../data_types/content_id.gd")
+const ContentId = preload("res://addons/aerobeat-content-core/data_types/content_id.gd")
 
 var kind: String = ""
 var id: String = ""

@@ -1,11 +1,11 @@
 extends RefCounted
 
-const ContentFeature = preload("res://../globals/content_feature.gd")
-const ContentPackageValidator = preload("res://../validators/content_package_validator.gd")
+const ContentFeature = preload("res://addons/aerobeat-content-core/globals/content_feature.gd")
+const ContentPackageValidator = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
 
 static func run() -> Dictionary:
 	var validator := ContentPackageValidator.new()
-	var fixture_path := ProjectSettings.globalize_path("res://../fixtures/invalid_chart_feature_dance")
+	var fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_chart_feature_dance")
 	var result := validator.validate_fixture_package(fixture_path)
 	var codes: Array[String] = []
 	for issue in result.issues:

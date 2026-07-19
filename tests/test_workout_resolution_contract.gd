@@ -1,6 +1,6 @@
 extends RefCounted
 
-const WorkoutResolution = preload("res://../interfaces/workout_resolution.gd")
+const WorkoutResolution = preload("res://addons/aerobeat-content-core/interfaces/workout_resolution.gd")
 
 class FakeWorkoutResolution:
 	extends WorkoutResolution

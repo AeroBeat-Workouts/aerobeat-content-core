@@ -1,12 +1,12 @@
 extends RefCounted
 
-const ContentPackageValidator = preload("res://../validators/content_package_validator.gd")
+const ContentPackageValidator = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
 
 static func run() -> Dictionary:
 	var validator := ContentPackageValidator.new()
-	var valid_fixture_path := ProjectSettings.globalize_path("res://../fixtures/package_minimal_boxing")
-	var missing_set_fixture_path := ProjectSettings.globalize_path("res://../fixtures/invalid_missing_set_ref")
-	var duplicate_fixture_path := ProjectSettings.globalize_path("res://../fixtures/invalid_duplicate_set_order_ids")
+	var valid_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/package_minimal_boxing")
+	var missing_set_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_missing_set_ref")
+	var duplicate_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_duplicate_set_order_ids")
 	var valid_result := validator.validate_fixture_package(valid_fixture_path)
 	var missing_set_result := validator.validate_fixture_package(missing_set_fixture_path)
 	var duplicate_result := validator.validate_fixture_package(duplicate_fixture_path)

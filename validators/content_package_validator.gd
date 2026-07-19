@@ -6,20 +6,20 @@ extends RefCounted
 # harness, but this validator now also includes a narrow canonical workout.yaml
 # package bridge that loads the YAML package graph and normalizes it onto the
 # shared record/reference checks below.
-const AeroContentSchema = preload("res://../globals/aero_content_schema.gd")
-const ContentDifficulty = preload("res://../globals/content_difficulty.gd")
-const ContentId = preload("res://../data_types/content_id.gd")
-const ContentFeature = preload("res://../globals/content_feature.gd")
-const ContentPackageManifest = preload("res://../data_types/content_package_manifest.gd")
-const ContentValidationIssue = preload("res://../validators/content_validation_issue.gd")
-const ContentValidationResult = preload("res://../validators/content_validation_result.gd")
-const Song = preload("res://../data_types/song.gd")
-const Chart = preload("res://../data_types/chart.gd")
-const ContentSet = preload("res://../data_types/content_set.gd")
-const Workout = preload("res://../data_types/workout.gd")
-const CoachConfig = preload("res://../data_types/coach_config.gd")
-const EnvironmentRecord = preload("res://../data_types/environment.gd")
-const SimpleYamlParser = preload("res://../validators/simple_yaml_parser.gd")
+const AeroContentSchema = preload("res://addons/aerobeat-content-core/globals/aero_content_schema.gd")
+const ContentDifficulty = preload("res://addons/aerobeat-content-core/globals/content_difficulty.gd")
+const ContentId = preload("res://addons/aerobeat-content-core/data_types/content_id.gd")
+const ContentFeature = preload("res://addons/aerobeat-content-core/globals/content_feature.gd")
+const ContentPackageManifest = preload("res://addons/aerobeat-content-core/data_types/content_package_manifest.gd")
+const ContentValidationIssue = preload("res://addons/aerobeat-content-core/validators/content_validation_issue.gd")
+const ContentValidationResult = preload("res://addons/aerobeat-content-core/validators/content_validation_result.gd")
+const Song = preload("res://addons/aerobeat-content-core/data_types/song.gd")
+const Chart = preload("res://addons/aerobeat-content-core/data_types/chart.gd")
+const ContentSet = preload("res://addons/aerobeat-content-core/data_types/content_set.gd")
+const Workout = preload("res://addons/aerobeat-content-core/data_types/workout.gd")
+const CoachConfig = preload("res://addons/aerobeat-content-core/data_types/coach_config.gd")
+const EnvironmentRecord = preload("res://addons/aerobeat-content-core/data_types/environment.gd")
+const SimpleYamlParser = preload("res://addons/aerobeat-content-core/validators/simple_yaml_parser.gd")
 
 func validate_fixture_package(package_dir: String) -> ContentValidationResult:
 	if FileAccess.file_exists(package_dir.path_join("workout.yaml")):

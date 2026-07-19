@@ -1,7 +1,7 @@
 class_name WorkoutResolution
 extends RefCounted
 
-const ResolvedWorkoutSet = preload("res://../data_types/resolved_workout_set.gd")
+const ResolvedWorkoutSet = preload("res://addons/aerobeat-content-core/data_types/resolved_workout_set.gd")
 
 const REQUIRED_FIELDS := ["workoutId", "sets"]
 

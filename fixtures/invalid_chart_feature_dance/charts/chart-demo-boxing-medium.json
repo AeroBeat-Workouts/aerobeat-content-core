@@ -7,11 +7,11 @@
   "beats": [
     {
       "start": 1.0,
-      "type": "punch_left"
+      "type": "straight_left"
     },
     {
       "start": 2.0,
-      "type": "punch_right"
+      "type": "straight_right"
     }
   ]
 }

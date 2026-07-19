@@ -1,12 +1,12 @@
 extends RefCounted
 
-const ContentPackageValidator = preload("res://../validators/content_package_validator.gd")
+const ContentPackageValidator = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
 
 static func run() -> Dictionary:
 	var validator := ContentPackageValidator.new()
-	var valid_fixture_path := ProjectSettings.globalize_path("res://../fixtures/package_yaml_valid_splat")
-	var invalid_environment_fixture_path := ProjectSettings.globalize_path("res://../fixtures/package_yaml_invalid_environment_type")
-	var missing_environment_fixture_path := ProjectSettings.globalize_path("res://../fixtures/package_yaml_missing_environment_ref")
+	var valid_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/package_yaml_valid_splat")
+	var invalid_environment_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/package_yaml_invalid_environment_type")
+	var missing_environment_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/package_yaml_missing_environment_ref")
 	var valid_result := validator.validate_workout_yaml_package(valid_fixture_path)
 	var autodetect_result := validator.validate_fixture_package(valid_fixture_path)
 	var invalid_environment_result := validator.validate_workout_yaml_package(invalid_environment_fixture_path)

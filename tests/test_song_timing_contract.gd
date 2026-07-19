@@ -1,6 +1,6 @@
 extends RefCounted
 
-const Song = preload("res://../data_types/song.gd")
+const Song = preload("res://addons/aerobeat-content-core/data_types/song.gd")
 
 static func run() -> Dictionary:
 	var missing_fields := Song.validate_shape({

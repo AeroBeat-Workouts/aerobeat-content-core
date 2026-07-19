@@ -1,7 +1,7 @@
 extends RefCounted
 
-const Workout = preload("res://../data_types/workout.gd")
-const WorkoutSet = preload("res://../data_types/workout_set.gd")
+const Workout = preload("res://addons/aerobeat-content-core/data_types/workout.gd")
+const WorkoutSet = preload("res://addons/aerobeat-content-core/data_types/workout_set.gd")
 
 static func run() -> Dictionary:
 	var missing_workout_set_fields := WorkoutSet.validate_shape({

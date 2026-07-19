@@ -67,8 +67,9 @@ Current suite coverage includes:
 - valid canonical `workout.yaml` fixture acceptance for the shared set-centered rules
 - valid transitional legacy-manifest fixture acceptance
 - environment-type and `splat` resource-format contract coverage
-- rejection of legacy Boxing punch labels such as `jab` and `cross`
-- preservation of Flow `placement` vs `direction` chart-field semantics
+- rejection of legacy Boxing strike labels such as `jab`, `cross`, `punch_left`, and `punch_right`
+- rejection of stale portal fields on current Boxing/Flow chart beats
+- validation of the frozen first-pass Flow `burst` beat object fields
 - rejection of missing set/song references and forbidden legacy manifest fields
 - rejection of non-v1 gameplay features such as Dance and Step
 
