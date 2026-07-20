@@ -73,7 +73,8 @@ Current suite coverage includes:
 - legacy manifest fixture acceptance/rejection coverage where still needed for compatibility
 - rejection of legacy Boxing strike labels such as `jab`, `cross`, `punch_left`, and `punch_right`
 - rejection of stale portal fields on current Boxing/Flow chart beats
-- validation of the frozen first-pass Flow `burst` beat object fields
+- validation of the approved Flow v1 authored object contract for `note`, `burst`, `bomb`, `obstacle`, and `arc`
+- preservation of the frozen first-pass Flow `burst` beat object fields inside that broader contract
 - rejection of non-v1 gameplay features such as Dance and Step
 
 ## Repository status

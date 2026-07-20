@@ -80,7 +80,16 @@ static func run() -> Dictionary:
 		"beats": [
 			{
 				"start": 1.0,
-				"end": 1.5,
+				"type": "note",
+				"hand": "left",
+				"placement": 4,
+				"requiresDirection": true,
+				"direction": 6,
+				"angleOffset": 15.0,
+			},
+			{
+				"start": 1.25,
+				"end": 1.75,
 				"type": "burst",
 				"hand": "left",
 				"placement": 4,
@@ -88,6 +97,44 @@ static func run() -> Dictionary:
 				"tailPlacement": 7,
 				"checkpointCount": 3,
 				"spacingBias": 0.25,
+			},
+			{
+				"start": 2.0,
+				"type": "bomb",
+				"placement": 5,
+			},
+			{
+				"start": 2.5,
+				"end": 4.0,
+				"type": "obstacle",
+				"cells": [4, 5, 8, 9],
+			},
+			{
+				"start": 5.0,
+				"end": 5.75,
+				"type": "arc",
+				"hand": "right",
+				"startPlacement": 6,
+				"endPlacement": 10,
+				"startDirection": 3,
+				"endDirection": 1,
+				"headCurveMultiplier": 1.25,
+				"tailCurveMultiplier": 0.8,
+				"midAnchorMode": 2,
+				"startNoteRef": "note-head-01",
+				"endNoteRef": "note-tail-01",
+			}
+		]
+	})
+	var directionless_note_issues := Chart.validate_contract({
+		"feature": "flow",
+		"beats": [
+			{
+				"start": 1.0,
+				"type": "note",
+				"hand": "right",
+				"placement": 6,
+				"requiresDirection": false,
 			}
 		]
 	})
@@ -96,12 +143,46 @@ static func run() -> Dictionary:
 		"beats": [
 			{
 				"start": 1.0,
-				"end": 1.5,
+				"type": "note",
+				"hand": "left",
+				"placement": 4,
+				"requiresDirection": false,
+				"direction": 6,
+				"angleOffset": "bad",
+			},
+			{
+				"start": 1.5,
+				"end": 2.0,
 				"type": "burst",
 				"hand": "left",
 				"direction": 6,
 				"tailPlacement": 7,
 				"checkpointCount": 3,
+			},
+			{
+				"start": 2.5,
+				"type": "bomb",
+				"placement": "bad",
+				"end": 2.6,
+			},
+			{
+				"start": 3.0,
+				"type": "obstacle",
+				"cells": [4, "bad"],
+			},
+			{
+				"start": 4.0,
+				"end": 4.5,
+				"type": "arc",
+				"hand": "right",
+				"startPlacement": 5,
+				"endPlacement": 8,
+				"startDirection": 2,
+				"endDirection": 3,
+				"headCurveMultiplier": 1.0,
+				"tailCurveMultiplier": 0.5,
+				"midAnchorMode": "bad",
+				"startNoteRef": 4,
 			}
 		]
 	}))
@@ -135,9 +216,25 @@ static func run() -> Dictionary:
 		and boxing_portal_codes == ["invalid_boxing_portal"]
 		and boxing_end_codes == ["invalid_boxing_end"]
 		and valid_flow_issues.is_empty()
-		and invalid_flow_codes == ["flow_burst_missing_placement"]
+		and directionless_note_issues.is_empty()
+		and invalid_flow_codes == [
+			"flow_arc_invalid_mid_anchor_mode",
+			"flow_arc_invalid_start_note_ref",
+			"flow_bomb_invalid_placement",
+			"flow_bomb_unexpected_end",
+			"flow_burst_missing_placement",
+			"flow_note_invalid_angle_offset",
+			"flow_note_unexpected_direction",
+			"flow_obstacle_invalid_cell",
+			"flow_obstacle_missing_end",
+		]
 		and stale_flow_codes == ["invalid_flow_type"]
-		and flow_portal_codes == ["invalid_flow_portal", "invalid_flow_type"]
+		and flow_portal_codes == [
+			"flow_note_missing_hand",
+			"flow_note_missing_placement",
+			"flow_note_missing_requires_direction",
+			"invalid_flow_portal",
+		]
 	)
 	return {
 		"name": "chart_event_contract",
@@ -151,6 +248,7 @@ static func run() -> Dictionary:
 			"boxingPortalCodes": boxing_portal_codes,
 			"boxingEndCodes": boxing_end_codes,
 			"validFlowIssues": valid_flow_issues,
+			"directionlessNoteIssues": directionless_note_issues,
 			"invalidFlowIssues": invalid_flow_codes,
 			"staleFlowCodes": stale_flow_codes,
 			"flowPortalCodes": flow_portal_codes,
