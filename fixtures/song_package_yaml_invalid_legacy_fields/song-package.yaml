@@ -10,6 +10,6 @@ workoutId: ab-workout-splat-demo
 workoutName: Splat Demo Workout
 coachConfigId: ab-coach-config-splat-demo
 setOrder:
-  - ab-set-splat-demo-boxing-medium
+  - ab-set-splat-demo-boxing-normal
 setIds:
-  - ab-set-splat-demo-boxing-medium
+  - ab-set-splat-demo-boxing-normal

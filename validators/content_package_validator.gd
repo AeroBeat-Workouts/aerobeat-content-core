@@ -2,10 +2,10 @@ class_name ContentPackageValidator
 extends RefCounted
 
 # Canonical authored package truth now lives in song-package.yaml-centered YAML docs.
-# Legacy manifest.json fixtures and workout.yaml aliases still exist as compatibility
-# bridges, but the default imported-player contract is now the simpler song-package
-# model: one song root, many exact chart/set slices, with no required package-local
-# coaching or environment ownership.
+# Legacy manifest.json fixtures still exist for isolated compatibility coverage, but
+# the default imported-player contract is now the simpler song-package model: one
+# song root, many exact chart/set slices, with no required package-local coaching
+# or environment ownership. The older workout.yaml root alias is retired.
 const AeroContentSchema = preload("res://addons/aerobeat-content-core/globals/aero_content_schema.gd")
 const ContentDifficulty = preload("res://addons/aerobeat-content-core/globals/content_difficulty.gd")
 const ContentId = preload("res://addons/aerobeat-content-core/data_types/content_id.gd")
@@ -26,18 +26,18 @@ func validate_fixture_package(package_dir: String) -> ContentValidationResult:
 	if FileAccess.file_exists(package_dir.path_join("song-package.yaml")):
 		return validate_song_package_yaml_package(package_dir)
 	if FileAccess.file_exists(package_dir.path_join("workout.yaml")):
-		return validate_workout_yaml_package(package_dir)
+		var retired_result := ContentValidationResult.new()
+		retired_result.add_issue(ContentValidationIssue.create(
+			"retired_workout_yaml_root",
+			ContentValidationIssue.SEVERITY_ERROR,
+			"workout.yaml is retired. Rename the package root to song-package.yaml.",
+			package_dir.path_join("workout.yaml")
+		))
+		return retired_result
 	return validate_legacy_manifest_fixture_package(package_dir)
 
 func validate_song_package_yaml_package(package_dir: String) -> ContentValidationResult:
 	var package_result := _load_song_package_yaml_package_data(package_dir, "song-package.yaml")
-	var load_result: ContentValidationResult = package_result.get("result", ContentValidationResult.new())
-	if not load_result.is_valid():
-		return load_result
-	return validate_song_package_data(package_result.get("package_data", {}))
-
-func validate_workout_yaml_package(package_dir: String) -> ContentValidationResult:
-	var package_result := _load_song_package_yaml_package_data(package_dir, "workout.yaml")
 	var load_result: ContentValidationResult = package_result.get("result", ContentValidationResult.new())
 	if not load_result.is_valid():
 		return load_result
@@ -93,15 +93,10 @@ func _load_song_package_yaml_package_data(package_dir: String, root_file_name: S
 	var root_path := package_dir.path_join(root_file_name)
 	var root_record := _load_yaml(root_path)
 	if root_record.is_empty():
-		var issue_code := "song_package_yaml_missing"
-		var message := "Canonical song-package.yaml package could not be loaded."
-		if root_file_name == "workout.yaml":
-			issue_code = "workout_yaml_missing"
-			message = "Legacy workout.yaml alias package could not be loaded."
 		result.add_issue(ContentValidationIssue.create(
-			issue_code,
+			"song_package_yaml_missing",
 			ContentValidationIssue.SEVERITY_ERROR,
-			message,
+			"Canonical song-package.yaml package could not be loaded.",
 			root_path
 		))
 		return {"result": result, "package_data": {}}
@@ -148,13 +143,6 @@ func _load_yaml_records_from_dir(package_dir: String, relative_dir: String) -> A
 
 func _normalize_root_song_package_record(record: Dictionary) -> Dictionary:
 	var normalized := record.duplicate(true)
-	var legacy_set_order := normalized.get("setOrder", [])
-	if not normalized.has("songPackageId") and normalized.has("workoutId"):
-		normalized["songPackageId"] = normalized.get("workoutId")
-	if not normalized.has("songPackageName") and normalized.has("workoutName"):
-		normalized["songPackageName"] = normalized.get("workoutName")
-	if not normalized.has("setIds") and legacy_set_order is Array:
-		normalized["setIds"] = legacy_set_order.duplicate(true)
 	normalized["schema"] = AeroContentSchema.SONG_PACKAGE_V1
 	return normalized
 
@@ -340,7 +328,7 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 				result.add_issue(ContentValidationIssue.create(
 					"invalid_difficulty",
 					ContentValidationIssue.SEVERITY_ERROR,
-					"Chart difficulty must be one of easy/medium/hard/pro.",
+					"Chart difficulty must be one of Easy/Normal/Hard/Expert/ExpertPlus.",
 					path
 				))
 		if kind == "environment":

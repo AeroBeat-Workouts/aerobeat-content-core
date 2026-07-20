@@ -3,7 +3,7 @@
   "chartId": "chart_demo_boxing_medium",
   "chartName": "Demo Boxing Medium",
   "feature": "dance",
-  "difficulty": "medium",
+  "difficulty": "Normal",
   "beats": [
     {
       "start": 1.0,

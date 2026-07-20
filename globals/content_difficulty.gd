@@ -1,12 +1,13 @@
 class_name ContentDifficulty
 extends RefCounted
 
-const EASY := "easy"
-const MEDIUM := "medium"
-const HARD := "hard"
-const PRO := "pro"
+const EASY := "Easy"
+const NORMAL := "Normal"
+const HARD := "Hard"
+const EXPERT := "Expert"
+const EXPERT_PLUS := "ExpertPlus"
 
-const ALL := [EASY, MEDIUM, HARD, PRO]
+const ALL := [EASY, NORMAL, HARD, EXPERT, EXPERT_PLUS]
 
 static func is_valid(difficulty: String) -> bool:
 	return difficulty in ALL

@@ -8,5 +8,5 @@ description: >-
   song-package bridge path in aerobeat-content-core.
 packageVersion: 1.0.0
 setIds:
-  - ab-set-splat-demo-boxing-medium
+  - ab-set-splat-demo-boxing-normal
   - ab-set-splat-demo-boxing-hard

@@ -18,7 +18,7 @@ Within that active default content model:
 - **Set** is the package-local playable linker between one song and one chart
 - package-local coaching is **not** part of the default imported-player contract
 - package-local environments are **not** part of the default imported-player contract
-- `workout.yaml`, package-owned coaching, and package-owned environments now survive only as transitional compatibility concepts, not as current default truth
+- `workout.yaml` is retired; package-owned coaching and package-owned environments are not part of the default song-package contract
 
 ## Lane boundaries
 
@@ -28,7 +28,7 @@ This repo intentionally owns:
 - package/reference validation semantics shared across tooling
 - Boxing and Flow chart/content vocabulary that belongs in durable authored content
 - song-package/set/song/chart relationship rules
-- narrow compatibility bridges needed while older fixture/test surfaces are retired
+- narrow legacy-manifest fixture coverage needed while older fixture/test surfaces are retired
 
 This repo intentionally does **not** own:
 
@@ -45,7 +45,7 @@ Current checked-in surfaces include:
 
 - `data_types/` record classes for song packages, songs, charts, sets, plus legacy compatibility record types still used by some fixture/test paths
 - `globals/` shared schema and vocabulary helpers
-- `interfaces/` seams for chart loading, registry, migration, and older workout-resolution compatibility work
+- `interfaces/` seams for chart loading, registry, and migration work
 - `validators/` shared package/content validation helpers, including the canonical `song-package.yaml` bridge and legacy fallback paths
 - `tests/` contract coverage for the imported song-package rules plus legacy compatibility fixtures
 - hidden `.testbed/` Godot project wiring used to run the contract suite
@@ -67,8 +67,7 @@ godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
 Current suite coverage includes:
 
 - valid canonical `song-package.yaml` fixture acceptance for the shared imported-player rules
-- transitional `workout.yaml` alias acceptance while the manifest rename lands through downstream repos
-- rejection of stale root workout fields on canonical song-package fixtures
+- rejection of retired workout.yaml roots and stale root workout fields on canonical song-package fixtures
 - rejection of stale per-set `environmentId` / `coachingOverlayId` fields on canonical song-package fixtures
 - rejection of missing set/song/chart references
 - legacy manifest fixture acceptance/rejection coverage where still needed for compatibility

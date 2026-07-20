@@ -1,9 +1,9 @@
 schemaId: aerobeat.set.v1
 schemaVersion: 1
 recordVersion: 1
-setId: ab-set-splat-demo-boxing-medium
-setName: Splat Demo Boxing Medium
+setId: ab-set-splat-demo-boxing-normal
+setName: Splat Demo Boxing Normal
 songId: ab-song-splat-demo
-chartId: ab-chart-splat-demo-boxing-medium
+chartId: ab-chart-splat-demo-boxing-normal
 environmentId: ab-environment-splat-demo
 coachingOverlayId: ab-overlay-splat-demo
