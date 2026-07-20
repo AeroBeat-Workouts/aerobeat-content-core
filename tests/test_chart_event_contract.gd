@@ -41,6 +41,15 @@ static func run() -> Dictionary:
 			}
 		]
 	}))
+	var stale_boxing_codes := _codes_from(Chart.validate_contract({
+		"feature": "boxing",
+		"beats": [
+			{
+				"start": 1.0,
+				"type": "orthodox",
+			}
+		]
+	}))
 	var boxing_portal_codes := _codes_from(Chart.validate_contract({
 		"feature": "boxing",
 		"beats": [
@@ -81,6 +90,15 @@ static func run() -> Dictionary:
 			}
 		]
 	}))
+	var stale_flow_codes := _codes_from(Chart.validate_contract({
+		"feature": "flow",
+		"beats": [
+			{
+				"start": 1.0,
+				"type": "swing_left",
+			}
+		]
+	}))
 	var flow_portal_codes := _codes_from(Chart.validate_contract({
 		"feature": "flow",
 		"beats": [
@@ -93,13 +111,15 @@ static func run() -> Dictionary:
 	}))
 	var passed := (
 		not fixture_result.is_valid()
-		and fixture_codes == ["invalid_boxing_type", "invalid_boxing_type"]
+		and fixture_codes == ["invalid_boxing_type", "invalid_boxing_type", "invalid_boxing_type"]
 		and valid_boxing_issues.is_empty()
 		and legacy_boxing_codes == ["invalid_boxing_type"]
+		and stale_boxing_codes == ["invalid_boxing_type"]
 		and boxing_portal_codes == ["invalid_boxing_portal"]
 		and valid_flow_issues.is_empty()
 		and invalid_flow_codes == ["flow_burst_missing_placement"]
-		and flow_portal_codes == ["invalid_flow_portal"]
+		and stale_flow_codes == ["invalid_flow_type"]
+		and flow_portal_codes == ["invalid_flow_portal", "invalid_flow_type"]
 	)
 	return {
 		"name": "chart_event_contract",
@@ -108,9 +128,11 @@ static func run() -> Dictionary:
 			"fixtureIssues": fixture_result.to_dict(),
 			"validBoxingIssues": valid_boxing_issues,
 			"legacyBoxingCodes": legacy_boxing_codes,
+			"staleBoxingCodes": stale_boxing_codes,
 			"boxingPortalCodes": boxing_portal_codes,
 			"validFlowIssues": valid_flow_issues,
 			"invalidFlowIssues": invalid_flow_codes,
+			"staleFlowCodes": stale_flow_codes,
 			"flowPortalCodes": flow_portal_codes,
 		},
 	}

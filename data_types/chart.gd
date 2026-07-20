@@ -12,7 +12,21 @@ const BOXING_LEGACY_TYPE_REPLACEMENTS := {
 	"punch_right": "straight_right",
 }
 
-const BOXING_AUTHORED_STANCE_TYPES := ["orthodox", "southpaw"]
+const BOXING_ALLOWED_TYPES := [
+	"straight_left",
+	"straight_right",
+	"hook_left",
+	"hook_right",
+	"uppercut_left",
+	"uppercut_right",
+	"guard",
+	"squat",
+	"weave_left",
+	"weave_right",
+]
+const BOXING_ALLOWED_TYPES_TEXT := "straight_left, straight_right, hook_left, hook_right, uppercut_left, uppercut_right, guard, squat, weave_left, weave_right"
+const FLOW_ALLOWED_TYPES := ["burst"]
+const FLOW_ALLOWED_TYPES_TEXT := "burst"
 const FLOW_BURST_HAND_VALUES := ["left", "right"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
@@ -87,8 +101,13 @@ static func _validate_boxing_beat(beat: Dictionary, type: String, index: int) ->
 			"index": index,
 			"message": "Boxing beat type '%s' is legacy. Use '%s' to match the canonical authored chart contract." % [type, BOXING_LEGACY_TYPE_REPLACEMENTS[type]],
 		})
-	elif type in BOXING_AUTHORED_STANCE_TYPES:
-		pass
+	elif not (type in BOXING_ALLOWED_TYPES):
+		issues.append({
+			"code": "invalid_boxing_type",
+			"field": "beats[%d].type" % index,
+			"index": index,
+			"message": "Boxing beat type '%s' is not part of the canonical authored chart contract. Allowed types: %s." % [type, BOXING_ALLOWED_TYPES_TEXT],
+		})
 	if beat.has("portal"):
 		issues.append({
 			"code": "invalid_boxing_portal",
@@ -107,7 +126,13 @@ static func _validate_flow_beat(beat: Dictionary, type: String, index: int) -> A
 			"index": index,
 			"message": "Flow beat portal fields are stale. The current Flow direction is direct calibrated 4x3 gameplay rather than portal-based authored placement.",
 		})
-	if type != "burst":
+	if not (type in FLOW_ALLOWED_TYPES):
+		issues.append({
+			"code": "invalid_flow_type",
+			"field": "beats[%d].type" % index,
+			"index": index,
+			"message": "Flow beat type '%s' is not part of the canonical authored chart contract. Allowed types: %s." % [type, FLOW_ALLOWED_TYPES_TEXT],
+		})
 		return issues
 	if not beat.has("end"):
 		issues.append({
