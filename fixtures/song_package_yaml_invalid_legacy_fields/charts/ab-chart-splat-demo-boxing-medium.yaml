@@ -8,5 +8,3 @@ difficulty: medium
 beats:
   - start: 1.0
     type: straight_left
-  - start: 2.0
-    type: straight_right

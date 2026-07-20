@@ -1,0 +1,12 @@
+schemaId: aerobeat.song-package.v1
+schemaVersion: 1
+recordVersion: 1
+songPackageId: ab-songpkg-splat-demo
+songPackageName: Splat Demo Song Package
+description: >-
+  Minimal canonical song-package.yaml fixture used to validate the imported
+  song-package bridge path in aerobeat-content-core.
+packageVersion: 1.0.0
+setIds:
+  - ab-set-splat-demo-boxing-medium
+  - ab-set-splat-demo-boxing-hard

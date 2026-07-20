@@ -1,0 +1,10 @@
+schemaId: aerobeat.chart.boxing.v1
+schemaVersion: 1
+recordVersion: 1
+chartId: ab-chart-splat-demo-boxing-medium
+chartName: Splat Demo Boxing Medium
+feature: boxing
+difficulty: medium
+beats:
+  - start: 1.0
+    type: straight_left

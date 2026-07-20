@@ -1,11 +1,11 @@
 class_name ContentPackageValidator
 extends RefCounted
 
-# Canonical authored package truth now lives in workout.yaml-centered YAML docs.
-# The checked-in JSON manifest fixtures still exist as a transitional compatibility
-# harness, but this validator now also includes a narrow canonical workout.yaml
-# package bridge that loads the YAML package graph and normalizes it onto the
-# shared record/reference checks below.
+# Canonical authored package truth now lives in song-package.yaml-centered YAML docs.
+# Legacy manifest.json fixtures and workout.yaml aliases still exist as compatibility
+# bridges, but the default imported-player contract is now the simpler song-package
+# model: one song root, many exact chart/set slices, with no required package-local
+# coaching or environment ownership.
 const AeroContentSchema = preload("res://addons/aerobeat-content-core/globals/aero_content_schema.gd")
 const ContentDifficulty = preload("res://addons/aerobeat-content-core/globals/content_difficulty.gd")
 const ContentId = preload("res://addons/aerobeat-content-core/data_types/content_id.gd")
@@ -13,6 +13,7 @@ const ContentFeature = preload("res://addons/aerobeat-content-core/globals/conte
 const ContentPackageManifest = preload("res://addons/aerobeat-content-core/data_types/content_package_manifest.gd")
 const ContentValidationIssue = preload("res://addons/aerobeat-content-core/validators/content_validation_issue.gd")
 const ContentValidationResult = preload("res://addons/aerobeat-content-core/validators/content_validation_result.gd")
+const SongPackage = preload("res://addons/aerobeat-content-core/data_types/song_package.gd")
 const Song = preload("res://addons/aerobeat-content-core/data_types/song.gd")
 const Chart = preload("res://addons/aerobeat-content-core/data_types/chart.gd")
 const ContentSet = preload("res://addons/aerobeat-content-core/data_types/content_set.gd")
@@ -22,16 +23,25 @@ const EnvironmentRecord = preload("res://addons/aerobeat-content-core/data_types
 const SimpleYamlParser = preload("res://addons/aerobeat-content-core/validators/simple_yaml_parser.gd")
 
 func validate_fixture_package(package_dir: String) -> ContentValidationResult:
+	if FileAccess.file_exists(package_dir.path_join("song-package.yaml")):
+		return validate_song_package_yaml_package(package_dir)
 	if FileAccess.file_exists(package_dir.path_join("workout.yaml")):
 		return validate_workout_yaml_package(package_dir)
 	return validate_legacy_manifest_fixture_package(package_dir)
 
-func validate_workout_yaml_package(package_dir: String) -> ContentValidationResult:
-	var package_result := _load_workout_yaml_package_data(package_dir)
+func validate_song_package_yaml_package(package_dir: String) -> ContentValidationResult:
+	var package_result := _load_song_package_yaml_package_data(package_dir, "song-package.yaml")
 	var load_result: ContentValidationResult = package_result.get("result", ContentValidationResult.new())
 	if not load_result.is_valid():
 		return load_result
-	return validate_package_data(package_result.get("package_data", {}))
+	return validate_song_package_data(package_result.get("package_data", {}))
+
+func validate_workout_yaml_package(package_dir: String) -> ContentValidationResult:
+	var package_result := _load_song_package_yaml_package_data(package_dir, "workout.yaml")
+	var load_result: ContentValidationResult = package_result.get("result", ContentValidationResult.new())
+	if not load_result.is_valid():
+		return load_result
+	return validate_song_package_data(package_result.get("package_data", {}))
 
 func validate_legacy_manifest_fixture_package(package_dir: String) -> ContentValidationResult:
 	var manifest_path := package_dir.path_join("manifest.json")
@@ -54,68 +64,57 @@ func validate_legacy_manifest_fixture_package(package_dir: String) -> ContentVal
 		"coaches": _load_records(package_dir, manifest.get("coaches", [])),
 		"environments": _load_records(package_dir, manifest.get("environments", [])),
 	}
-	return validate_package_data(package_data)
+	return validate_legacy_package_data(package_data)
 
-func validate_package_data(package_data: Dictionary) -> ContentValidationResult:
+func validate_song_package_data(package_data: Dictionary) -> ContentValidationResult:
+	var result := ContentValidationResult.new()
+	_validate_records(package_data.get("song_packages", []), SongPackage, "song_package", result)
+	_validate_records(package_data.get("songs", []), Song, "song", result)
+	_validate_records(package_data.get("charts", []), Chart, "chart", result)
+	_validate_records(package_data.get("sets", []), ContentSet, "set", result, true)
+	_validate_song_package_references(package_data, result)
+	return result
+
+func validate_legacy_package_data(package_data: Dictionary) -> ContentValidationResult:
 	var result := ContentValidationResult.new()
 	var manifest: Dictionary = package_data.get("manifest", {})
 	_validate_manifest(manifest, result)
 	_validate_records(package_data.get("songs", []), Song, "song", result)
 	_validate_records(package_data.get("charts", []), Chart, "chart", result)
-	_validate_records(package_data.get("sets", []), ContentSet, "set", result)
+	_validate_records(package_data.get("sets", []), ContentSet, "set", result, false)
 	_validate_records(package_data.get("workouts", []), Workout, "workout", result)
 	_validate_records(package_data.get("coaches", []), CoachConfig, "coach_config", result)
 	_validate_records(package_data.get("environments", []), EnvironmentRecord, "environment", result)
-	_validate_references(package_data, result)
+	_validate_legacy_references(package_data, result)
 	return result
 
-func _load_workout_yaml_package_data(package_dir: String) -> Dictionary:
+func _load_song_package_yaml_package_data(package_dir: String, root_file_name: String) -> Dictionary:
 	var result := ContentValidationResult.new()
-	var workout_path := package_dir.path_join("workout.yaml")
-	var root_record := _load_yaml(workout_path)
+	var root_path := package_dir.path_join(root_file_name)
+	var root_record := _load_yaml(root_path)
 	if root_record.is_empty():
+		var issue_code := "song_package_yaml_missing"
+		var message := "Canonical song-package.yaml package could not be loaded."
+		if root_file_name == "workout.yaml":
+			issue_code = "workout_yaml_missing"
+			message = "Legacy workout.yaml alias package could not be loaded."
 		result.add_issue(ContentValidationIssue.create(
-			"workout_yaml_missing",
+			issue_code,
 			ContentValidationIssue.SEVERITY_ERROR,
-			"Canonical workout.yaml package could not be loaded.",
-			workout_path
+			message,
+			root_path
 		))
 		return {"result": result, "package_data": {}}
-	var songs := _load_yaml_records_from_dir(package_dir, "songs")
-	var charts := _load_yaml_records_from_dir(package_dir, "charts")
-	var sets := _load_yaml_records_from_dir(package_dir, "sets")
-	var coaches := _load_yaml_records_from_dir(package_dir, "coaches")
-	var environments := _load_yaml_records_from_dir(package_dir, "environments")
-	var root_workout := _normalize_yaml_workout_record(root_record)
-	var manifest := {
-		"schema": AeroContentSchema.PACKAGE_MANIFEST_V1,
-		"packageId": String(root_workout.get("workoutId", package_dir.get_file())),
-		"packageVersion": String(root_record.get("packageVersion", "")),
-		"songs": _manifest_entries_for_records(songs),
-		"charts": _manifest_entries_for_records(charts),
-		"sets": _manifest_entries_for_records(sets),
-		"workouts": [{"path": "workout.yaml"}],
-		"coaches": _manifest_entries_for_records(coaches),
-		"environments": _manifest_entries_for_records(environments),
-	}
+	var song_package := _normalize_root_song_package_record(root_record)
 	return {
 		"result": result,
 		"package_data": {
-			"manifest": manifest,
-			"songs": songs,
-			"charts": charts,
-			"sets": sets,
-			"workouts": [{"path": "workout.yaml", "data": root_workout}],
-			"coaches": coaches,
-			"environments": environments,
-		},
+			"song_packages": [{"path": root_file_name, "data": song_package}],
+			"songs": _load_yaml_records_from_dir(package_dir, "songs"),
+			"charts": _load_yaml_records_from_dir(package_dir, "charts"),
+			"sets": _load_yaml_records_from_dir(package_dir, "sets"),
+		}
 	}
-
-func _manifest_entries_for_records(records: Array) -> Array:
-	var entries: Array = []
-	for record in records:
-		entries.append({"path": String(record.get("path", ""))})
-	return entries
 
 func _load_yaml_records_from_dir(package_dir: String, relative_dir: String) -> Array[Dictionary]:
 	var records: Array[Dictionary] = []
@@ -147,9 +146,16 @@ func _load_yaml_records_from_dir(package_dir: String, relative_dir: String) -> A
 		})
 	return records
 
-func _normalize_yaml_workout_record(record: Dictionary) -> Dictionary:
+func _normalize_root_song_package_record(record: Dictionary) -> Dictionary:
 	var normalized := record.duplicate(true)
-	normalized["schema"] = AeroContentSchema.WORKOUT_V1
+	var legacy_set_order := normalized.get("setOrder", [])
+	if not normalized.has("songPackageId") and normalized.has("workoutId"):
+		normalized["songPackageId"] = normalized.get("workoutId")
+	if not normalized.has("songPackageName") and normalized.has("workoutName"):
+		normalized["songPackageName"] = normalized.get("workoutName")
+	if not normalized.has("setIds") and legacy_set_order is Array:
+		normalized["setIds"] = legacy_set_order.duplicate(true)
+	normalized["schema"] = AeroContentSchema.SONG_PACKAGE_V1
 	return normalized
 
 func _normalize_yaml_record(record: Dictionary, kind: String) -> Dictionary:
@@ -172,12 +178,16 @@ func _normalize_yaml_record(record: Dictionary, kind: String) -> Dictionary:
 
 func _normalized_schema_for_record(kind: String, schema_id: String) -> String:
 	match kind:
+		"song_package":
+			return AeroContentSchema.SONG_PACKAGE_V1
 		"song":
 			return AeroContentSchema.SONG_V1
 		"chart":
 			return AeroContentSchema.CHART_V1
 		"set":
 			return AeroContentSchema.SET_V1
+		"workout":
+			return AeroContentSchema.WORKOUT_V1
 		"coach_config":
 			return AeroContentSchema.COACH_CONFIG_V1
 		"environment":
@@ -231,7 +241,7 @@ func _validate_manifest(manifest: Dictionary, result: ContentValidationResult) -
 			"manifest.packageId"
 		))
 
-func _validate_records(records: Array, contract_script: GDScript, kind: String, result: ContentValidationResult) -> void:
+func _validate_records(records: Array, contract_script: GDScript, kind: String, result: ContentValidationResult, enforce_current_contract: bool = true) -> void:
 	var seen_ids: Dictionary = {}
 	for record in records:
 		var data: Dictionary = record.get("data", {})
@@ -250,6 +260,24 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 					String(issue.get("code", "song_timing_contract_issue")),
 					ContentValidationIssue.SEVERITY_ERROR,
 					String(issue.get("message", "Song timing contract issue.")),
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
+				))
+		if kind == "song_package":
+			for issue in SongPackage.validate_contract(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "song_package_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Song package contract issue.")),
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
+				))
+		if kind == "set" and enforce_current_contract:
+			for issue in ContentSet.validate_contract(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "set_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Set contract issue.")),
 					_path_with_issue_context(path, issue),
 					_issue_reference(issue)
 				))
@@ -334,7 +362,61 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 					_issue_reference(issue)
 				))
 
-func _validate_references(package_data: Dictionary, result: ContentValidationResult) -> void:
+func _validate_song_package_references(package_data: Dictionary, result: ContentValidationResult) -> void:
+	var songs_by_id := _index_records(package_data.get("songs", []), "songId")
+	var charts_by_id := _index_records(package_data.get("charts", []), "chartId")
+	var sets_by_id := _index_records(package_data.get("sets", []), "setId")
+	for set_record in package_data.get("sets", []):
+		var set_data: Dictionary = set_record.get("data", {})
+		var set_path := String(set_record.get("path", ""))
+		if not songs_by_id.has(String(set_data.get("songId", ""))):
+			result.add_issue(ContentValidationIssue.create(
+				"missing_song_ref",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Set references a songId that is not present in the package.",
+				set_path,
+				{"songId": set_data.get("songId", "")}
+			))
+		if not charts_by_id.has(String(set_data.get("chartId", ""))):
+			result.add_issue(ContentValidationIssue.create(
+				"missing_chart_ref",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Set references a chartId that is not present in the package.",
+				set_path,
+				{"chartId": set_data.get("chartId", "")}
+			))
+	for package_record in package_data.get("song_packages", []):
+		var song_package: Dictionary = package_record.get("data", {})
+		var package_path := String(package_record.get("path", ""))
+		var set_ids_value: Variant = song_package.get("setIds", [])
+		if not (set_ids_value is Array):
+			continue
+		var seen_set_ids: Dictionary = {}
+		for index in range(set_ids_value.size()):
+			var set_id := String(set_ids_value[index])
+			var set_path := "%s#setIds[%d]" % [package_path, index]
+			if set_id.is_empty():
+				continue
+			if seen_set_ids.has(set_id):
+				result.add_issue(ContentValidationIssue.create(
+					"duplicate_song_package_set_id",
+					ContentValidationIssue.SEVERITY_ERROR,
+					"Song package setIds contains duplicate set id '%s'." % set_id,
+					set_path,
+					{"setId": set_id}
+				))
+			else:
+				seen_set_ids[set_id] = index
+			if not sets_by_id.has(set_id):
+				result.add_issue(ContentValidationIssue.create(
+					"missing_set_ref",
+					ContentValidationIssue.SEVERITY_ERROR,
+					"Song package setIds references a setId that is not present in the package.",
+					set_path,
+					{"setId": set_id}
+				))
+
+func _validate_legacy_references(package_data: Dictionary, result: ContentValidationResult) -> void:
 	var songs_by_id := _index_records(package_data.get("songs", []), "songId")
 	var charts_by_id := _index_records(package_data.get("charts", []), "chartId")
 	var sets_by_id := _index_records(package_data.get("sets", []), "setId")
@@ -484,6 +566,8 @@ func _index_records(records: Array, id_key: String) -> Dictionary:
 
 func _id_key_for_kind(kind: String) -> String:
 	match kind:
+		"song_package":
+			return "songPackageId"
 		"song":
 			return "songId"
 		"chart":
@@ -501,6 +585,8 @@ func _id_key_for_kind(kind: String) -> String:
 
 func _kind_label(kind: String) -> String:
 	match kind:
+		"song_package":
+			return "Song package"
 		"coach_config":
 			return "Coach config"
 		_:

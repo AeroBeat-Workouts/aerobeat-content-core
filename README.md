@@ -1,33 +1,34 @@
 # aerobeat-content-core
 
-Shared AeroBeat content-domain types and structural validation helpers for the downscoped v1 package model: Songs, Charts, Sets, Workouts, Coach Configs, Environments, shared chart-envelope types, and package reference validation.
+Shared AeroBeat content-domain types and structural validation helpers for the current imported-player package model: **song packages**, songs, charts, sets, shared chart-envelope types, and package reference validation.
 
 ## Architecture role
 
-`aerobeat-content-core` is the lane owner for durable content-domain semantics. It defines the shared authored-record shapes and integrity rules that tooling and runtime consumers can both depend on while leaving gameplay execution, rendering, scoring, package import UX, and editor UX to other repos.
+`aerobeat-content-core` is the lane owner for durable content-domain semantics. It defines the shared authored/imported record shapes and integrity rules that tooling and runtime consumers can both depend on while leaving gameplay execution, rendering, scoring, package import UX, and editor UX to other repos.
 
-## V1 scope stance
+## Current package stance
 
-The current canonical authored package contract is the **workout.yaml-centered YAML package model** documented in `aerobeat-docs`.
+The current canonical imported package contract is the **`song-package.yaml`-centered YAML package model** documented in `aerobeat-docs`.
 
-Within that active v1 content model:
+Within that active default content model:
 
-- official gameplay features are **boxing** and **flow**
-- the canonical package shape centers on `workout.yaml`, `songs/`, `charts/`, `sets/`, `coaches/`, and `environments/`
-- **Set** is the package-local composition linker between one song, one chart, one environment, and optional coaching overlay selection
-- environment records remain valid authored content
-- package-local gameplay `assets` and `assetSelections` are not part of the active v1 contract
-- `routine`, Dance, and Step are not canonical truth in the current shared content model
+- imported playable content is organized as one **song package** per source song/root
+- one song package may contain **multiple exact chart/set difficulty slices** for that song root
+- the canonical package shape centers on `song-package.yaml`, `songs/`, `charts/`, and `sets/`
+- **Set** is the package-local playable linker between one song and one chart
+- package-local coaching is **not** part of the default imported-player contract
+- package-local environments are **not** part of the default imported-player contract
+- `workout.yaml`, package-owned coaching, and package-owned environments now survive only as transitional compatibility concepts, not as current default truth
 
 ## Lane boundaries
 
 This repo intentionally owns:
 
-- shared authored content record types and schema ids
+- shared authored/imported content record types and schema ids
 - package/reference validation semantics shared across tooling
 - Boxing and Flow chart/content vocabulary that belongs in durable authored content
-- set/workout/environment relationship rules
-- shared environment-type acceptance and related content validation boundaries
+- song-package/set/song/chart relationship rules
+- narrow compatibility bridges needed while older fixture/test surfaces are retired
 
 This repo intentionally does **not** own:
 
@@ -36,16 +37,17 @@ This repo intentionally does **not** own:
 - gameplay scoring/runtime interpretation
 - UI presentation or shell logic
 - the full import/export pipeline for every product tool
+- environment-package or coaching-extension runtime behavior
 
 ## Current repository contents
 
 Current checked-in surfaces include:
 
-- `data_types/` record classes for songs, charts, sets, workouts, environments, coach configs, and related content entities
+- `data_types/` record classes for song packages, songs, charts, sets, plus legacy compatibility record types still used by some fixture/test paths
 - `globals/` shared schema and vocabulary helpers
-- `interfaces/` seams for chart loading, registry, migration, and workout resolution
-- `validators/` shared package/content validation helpers, including the narrow YAML bridge
-- `tests/` contract coverage for the set-centered v1 package rules and legacy compatibility fixtures
+- `interfaces/` seams for chart loading, registry, migration, and older workout-resolution compatibility work
+- `validators/` shared package/content validation helpers, including the canonical `song-package.yaml` bridge and legacy fallback paths
+- `tests/` contract coverage for the imported song-package rules plus legacy compatibility fixtures
 - hidden `.testbed/` Godot project wiring used to run the contract suite
 
 ## Intended consumers
@@ -64,15 +66,17 @@ godot --headless --path .testbed --script res://../tests/run_contract_tests.gd
 
 Current suite coverage includes:
 
-- valid canonical `workout.yaml` fixture acceptance for the shared set-centered rules
-- valid transitional legacy-manifest fixture acceptance
-- environment-type and `splat` resource-format contract coverage
+- valid canonical `song-package.yaml` fixture acceptance for the shared imported-player rules
+- transitional `workout.yaml` alias acceptance while the manifest rename lands through downstream repos
+- rejection of stale root workout fields on canonical song-package fixtures
+- rejection of stale per-set `environmentId` / `coachingOverlayId` fields on canonical song-package fixtures
+- rejection of missing set/song/chart references
+- legacy manifest fixture acceptance/rejection coverage where still needed for compatibility
 - rejection of legacy Boxing strike labels such as `jab`, `cross`, `punch_left`, and `punch_right`
 - rejection of stale portal fields on current Boxing/Flow chart beats
 - validation of the frozen first-pass Flow `burst` beat object fields
-- rejection of missing set/song references and forbidden legacy manifest fields
 - rejection of non-v1 gameplay features such as Dance and Step
 
 ## Repository status
 
-This repo is the canonical home for shared Content-lane contracts in the downscoped AeroBeat v1 architecture. Keep the public surface centered on durable authored-content semantics and shared validation rules rather than quietly absorbing tool UX, gameplay runtime behavior, or removed package-local asset concepts.
+This repo is the canonical home for shared content-lane contracts in the BeatSaver-powered AeroBeat direction. Keep the public surface centered on durable imported-content semantics and shared validation rules rather than quietly reintroducing retired workout/coaching/environment package assumptions.

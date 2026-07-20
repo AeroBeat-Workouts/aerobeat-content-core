@@ -2,6 +2,7 @@ class_name AeroContentSchema
 extends RefCounted
 
 const PACKAGE_MANIFEST_V1: String = "aerobeat.content.package_manifest.v1"
+const SONG_PACKAGE_V1: String = "aerobeat.content.song_package.v1"
 const SONG_V1: String = "aerobeat.content.song.v1"
 const CHART_V1: String = "aerobeat.content.chart.v1"
 const SET_V1: String = "aerobeat.content.set.v1"
@@ -11,6 +12,7 @@ const ENVIRONMENT_V1: String = "aerobeat.content.environment.v1"
 
 const KNOWN_SCHEMAS := {
 	PACKAGE_MANIFEST_V1: true,
+	SONG_PACKAGE_V1: true,
 	SONG_V1: true,
 	CHART_V1: true,
 	SET_V1: true,
@@ -20,6 +22,7 @@ const KNOWN_SCHEMAS := {
 }
 
 const RECORD_SCHEMAS := {
+	SONG_PACKAGE_V1: true,
 	SONG_V1: true,
 	CHART_V1: true,
 	SET_V1: true,
