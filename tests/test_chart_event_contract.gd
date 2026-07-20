@@ -12,19 +12,24 @@ static func _codes_from(issues: Array) -> Array[String]:
 
 static func run() -> Dictionary:
 	var validator := ContentPackageValidator.new()
-	var fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_boxing_legacy_chart_vocab")
-	var fixture_result := validator.validate_fixture_package(fixture_path)
-	var fixture_codes: Array[String] = []
-	for issue in fixture_result.issues:
-		fixture_codes.append(String(issue.get("code", "")))
-	fixture_codes.sort()
+	var legacy_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_boxing_legacy_chart_vocab")
+	var legacy_fixture_result := validator.validate_fixture_package(legacy_fixture_path)
+	var legacy_fixture_codes: Array[String] = []
+	for issue in legacy_fixture_result.issues:
+		legacy_fixture_codes.append(String(issue.get("code", "")))
+	legacy_fixture_codes.sort()
+	var boxing_end_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_boxing_end_field")
+	var boxing_end_fixture_result := validator.validate_fixture_package(boxing_end_fixture_path)
+	var boxing_end_fixture_codes: Array[String] = []
+	for issue in boxing_end_fixture_result.issues:
+		boxing_end_fixture_codes.append(String(issue.get("code", "")))
+	boxing_end_fixture_codes.sort()
 	var valid_boxing_issues := Chart.validate_contract({
 		"feature": "boxing",
 		"beats": [
 			{
 				"start": 1.0,
 				"type": "straight_left",
-				"end": 2.0,
 			},
 			{
 				"start": 3.0,
@@ -57,6 +62,16 @@ static func run() -> Dictionary:
 				"start": 1.0,
 				"type": "hook_left",
 				"portal": 9,
+			}
+		]
+	}))
+	var boxing_end_codes := _codes_from(Chart.validate_contract({
+		"feature": "boxing",
+		"beats": [
+			{
+				"start": 1.0,
+				"type": "straight_left",
+				"end": 2.0,
 			}
 		]
 	}))
@@ -110,12 +125,15 @@ static func run() -> Dictionary:
 		]
 	}))
 	var passed := (
-		not fixture_result.is_valid()
-		and fixture_codes == ["invalid_boxing_type", "invalid_boxing_type", "invalid_boxing_type"]
+		not legacy_fixture_result.is_valid()
+		and legacy_fixture_codes == ["invalid_boxing_type", "invalid_boxing_type", "invalid_boxing_type"]
+		and not boxing_end_fixture_result.is_valid()
+		and boxing_end_fixture_codes == ["invalid_boxing_end"]
 		and valid_boxing_issues.is_empty()
 		and legacy_boxing_codes == ["invalid_boxing_type"]
 		and stale_boxing_codes == ["invalid_boxing_type"]
 		and boxing_portal_codes == ["invalid_boxing_portal"]
+		and boxing_end_codes == ["invalid_boxing_end"]
 		and valid_flow_issues.is_empty()
 		and invalid_flow_codes == ["flow_burst_missing_placement"]
 		and stale_flow_codes == ["invalid_flow_type"]
@@ -125,11 +143,13 @@ static func run() -> Dictionary:
 		"name": "chart_event_contract",
 		"passed": passed,
 		"details": {
-			"fixtureIssues": fixture_result.to_dict(),
+			"legacyFixtureIssues": legacy_fixture_result.to_dict(),
+			"boxingEndFixtureIssues": boxing_end_fixture_result.to_dict(),
 			"validBoxingIssues": valid_boxing_issues,
 			"legacyBoxingCodes": legacy_boxing_codes,
 			"staleBoxingCodes": stale_boxing_codes,
 			"boxingPortalCodes": boxing_portal_codes,
+			"boxingEndCodes": boxing_end_codes,
 			"validFlowIssues": valid_flow_issues,
 			"invalidFlowIssues": invalid_flow_codes,
 			"staleFlowCodes": stale_flow_codes,

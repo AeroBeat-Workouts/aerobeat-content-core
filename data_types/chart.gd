@@ -76,6 +76,7 @@ static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 				"index": index,
 				"message": "Chart beat end must be numeric when present.",
 			})
+			continue
 		var type := String(beat.get("type", ""))
 		if type.is_empty():
 			issues.append({
@@ -114,6 +115,13 @@ static func _validate_boxing_beat(beat: Dictionary, type: String, index: int) ->
 			"field": "beats[%d].portal" % index,
 			"index": index,
 			"message": "Boxing beat portal fields are stale. Use semantic Boxing beat types without portal-based authored placement.",
+		})
+	if beat.has("end"):
+		issues.append({
+			"code": "invalid_boxing_end",
+			"field": "beats[%d].end" % index,
+			"index": index,
+			"message": "Boxing beat end fields are stale. Only Flow burst beats may declare an end beat value.",
 		})
 	return issues
 
