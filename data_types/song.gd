@@ -54,6 +54,7 @@ static func validate_audio_shape(data: Dictionary) -> Array[Dictionary]:
 				"message": "Song audio field '%s' must be a number when present." % field,
 				"field": "audio.%s" % field,
 			})
+	issues.append_array(_validate_preview_timing_ranges(audio))
 	if audio.has("previewMode"):
 		var preview_mode := String(audio.get("previewMode", ""))
 		if preview_mode.is_empty() or not (preview_mode in VALID_PREVIEW_MODES):
@@ -198,6 +199,26 @@ static func _validate_time_signature_segments(timing: Dictionary) -> Array[Dicti
 					"field": "timing.timeSignatureSegments[%d].%s" % [index, field],
 					"index": index,
 				})
+	return issues
+
+static func _validate_preview_timing_ranges(audio: Dictionary) -> Array[Dictionary]:
+	var issues: Array[Dictionary] = []
+	if audio.has("previewStartTime"):
+		var preview_start_time := audio.get("previewStartTime")
+		if _is_number(preview_start_time) and float(preview_start_time) < 0.0:
+			issues.append({
+				"code": "song_audio_preview_start_time_invalid_value",
+				"message": "Song audio previewStartTime must be greater than or equal to 0 when present.",
+				"field": "audio.previewStartTime",
+			})
+	if audio.has("previewDuration"):
+		var preview_duration := audio.get("previewDuration")
+		if _is_number(preview_duration) and float(preview_duration) <= 0.0:
+			issues.append({
+				"code": "song_audio_preview_duration_invalid_value",
+				"message": "Song audio previewDuration must be greater than 0 when present.",
+				"field": "audio.previewDuration",
+			})
 	return issues
 
 static func _is_integer_number(value: Variant) -> bool:

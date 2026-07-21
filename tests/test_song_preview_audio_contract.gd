@@ -21,6 +21,18 @@ static func run() -> Dictionary:
 			"previewMode": "derive_it_later",
 		}
 	}))
+	var invalid_negative_start_result := validator.validate_song_package_data(_mutated_preview_audio_package_data(loaded.get("package_data", {}), {
+		"previewStartTime": -0.01,
+	}))
+	var invalid_negative_duration_result := validator.validate_song_package_data(_mutated_preview_audio_package_data(loaded.get("package_data", {}), {
+		"previewDuration": -0.01,
+	}))
+	var invalid_zero_duration_result := validator.validate_song_package_data(_mutated_preview_audio_package_data(loaded.get("package_data", {}), {
+		"previewDuration": 0.0,
+	}))
+	var invalid_negative_start_codes := _sorted_codes_from_result(invalid_negative_start_result)
+	var invalid_negative_duration_codes := _sorted_codes_from_result(invalid_negative_duration_result)
+	var invalid_zero_duration_codes := _sorted_codes_from_result(invalid_zero_duration_result)
 	var passed: bool = (
 		valid_result.is_valid()
 		and normalized_audio.get("previewFilePath", "") == "media/audio/splat-demo-preview.ogg"
@@ -36,6 +48,15 @@ static func run() -> Dictionary:
 			"song_audio_field_invalid_type",
 			"song_audio_invalid_preview_mode",
 		]
+		and invalid_negative_start_codes == [
+			"song_audio_preview_start_time_invalid_value",
+		]
+		and invalid_negative_duration_codes == [
+			"song_audio_preview_duration_invalid_value",
+		]
+		and invalid_zero_duration_codes == [
+			"song_audio_preview_duration_invalid_value",
+		]
 	)
 	return {
 		"name": "song_preview_audio_contract",
@@ -44,8 +65,30 @@ static func run() -> Dictionary:
 			"valid": valid_result.to_dict(),
 			"normalizedAudio": normalized_audio,
 			"invalidCodes": invalid_codes,
+			"invalidNegativeStart": invalid_negative_start_result.to_dict(),
+			"invalidNegativeDuration": invalid_negative_duration_result.to_dict(),
+			"invalidZeroDuration": invalid_zero_duration_result.to_dict(),
 		},
 	}
+
+static func _mutated_preview_audio_package_data(package_data: Dictionary, audio_patch: Dictionary) -> Dictionary:
+	var mutated := package_data.duplicate(true)
+	var songs: Array = mutated.get("songs", [])
+	if songs.is_empty():
+		return mutated
+	var first_song: Dictionary = songs[0]
+	var song_data := Dictionary(first_song.get("data", {}))
+	var audio := Dictionary(song_data.get("audio", {}))
+	for key in audio_patch.keys():
+		audio[key] = audio_patch[key]
+	song_data["audio"] = audio
+	first_song["data"] = song_data
+	songs[0] = first_song
+	mutated["songs"] = songs
+	return mutated
+
+static func _sorted_codes_from_result(result) -> Array[String]:
+	return _sorted_codes(result.issues)
 
 static func _sorted_codes(issues: Array) -> Array[String]:
 	var codes: Array[String] = []
