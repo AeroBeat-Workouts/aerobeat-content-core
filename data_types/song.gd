@@ -3,6 +3,13 @@ extends RefCounted
 
 const REQUIRED_FIELDS := ["schema", "songId", "songName", "durationSec", "audio", "timing"]
 const TIMING_REQUIRED_FIELDS := ["anchorMs", "tempoSegments", "stopSegments", "timeSignatureSegments"]
+const AUDIO_OPTIONAL_STRING_FIELDS := [
+	"resourcePath",
+	"filePath",
+	"previewResourcePath",
+	"previewFilePath",
+	"previewUrl",
+]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	var missing: Array[String] = []
@@ -10,6 +17,28 @@ static func validate_shape(data: Dictionary) -> Array[String]:
 		if not data.has(field):
 			missing.append(field)
 	return missing
+
+static func validate_audio_shape(data: Dictionary) -> Array[Dictionary]:
+	var issues: Array[Dictionary] = []
+	if not data.has("audio"):
+		return issues
+	var audio_value: Variant = data.get("audio")
+	if not (audio_value is Dictionary):
+		issues.append({
+			"code": "song_audio_invalid_type",
+			"message": "Song audio must be a dictionary.",
+			"field": "audio",
+		})
+		return issues
+	var audio: Dictionary = audio_value
+	for field in AUDIO_OPTIONAL_STRING_FIELDS:
+		if audio.has(field) and not _is_non_empty_string(audio.get(field)):
+			issues.append({
+				"code": "song_audio_field_invalid_type",
+				"message": "Song audio field '%s' must be a non-empty string when present." % field,
+				"field": "audio.%s" % field,
+			})
+	return issues
 
 static func validate_timing_shape(data: Dictionary) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
@@ -149,3 +178,6 @@ static func _validate_time_signature_segments(timing: Dictionary) -> Array[Dicti
 
 static func _is_integer_number(value: Variant) -> bool:
 	return value is int or (value is float and floor(value) == value)
+
+static func _is_non_empty_string(value: Variant) -> bool:
+	return value is String and not String(value).strip_edges().is_empty()

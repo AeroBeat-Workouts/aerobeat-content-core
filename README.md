@@ -74,6 +74,7 @@ Current suite coverage includes:
 - rejection of legacy Boxing strike labels such as `jab`, `cross`, `punch_left`, and `punch_right`
 - rejection of stale portal fields on current Boxing/Flow chart beats
 - validation of the approved Flow v1 authored object contract for `note`, `burst`, `bomb`, `obstacle`, and `arc`
+- acceptance of the shared song-audio preview contract fields `audio.previewFilePath` (packaged/local preview asset) and `audio.previewUrl` (preserved provider/source preview URL truth)
 - preservation of the frozen first-pass Flow `burst` beat object fields inside that broader contract
 - rejection of non-v1 gameplay features such as Dance and Step
 

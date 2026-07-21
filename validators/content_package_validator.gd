@@ -158,6 +158,8 @@ func _normalize_yaml_record(record: Dictionary, kind: String) -> Dictionary:
 			var audio := Dictionary(audio_value).duplicate(true)
 			if audio.has("filePath") and not audio.has("resourcePath"):
 				audio["resourcePath"] = audio.get("filePath")
+			if audio.has("previewFilePath") and not audio.has("previewResourcePath"):
+				audio["previewResourcePath"] = audio.get("previewFilePath")
 			normalized["audio"] = audio
 			if not normalized.has("durationSec") and audio.has("durationMs"):
 				var duration_ms := float(audio.get("durationMs", 0))
@@ -243,6 +245,14 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 				{"kind": kind}
 			))
 		if kind == "song":
+			for issue in Song.validate_audio_shape(data):
+				result.add_issue(ContentValidationIssue.create(
+					String(issue.get("code", "song_audio_contract_issue")),
+					ContentValidationIssue.SEVERITY_ERROR,
+					String(issue.get("message", "Song audio contract issue.")),
+					_path_with_issue_context(path, issue),
+					_issue_reference(issue)
+				))
 			for issue in Song.validate_timing_shape(data):
 				result.add_issue(ContentValidationIssue.create(
 					String(issue.get("code", "song_timing_contract_issue")),
