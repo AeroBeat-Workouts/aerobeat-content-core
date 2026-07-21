@@ -7,6 +7,9 @@ audio:
   filePath: media/audio/splat-demo.ogg
   previewFilePath: media/audio/splat-demo-preview.ogg
   previewUrl: https://cdn.example.invalid/beatsaver/splat-demo-preview.mp3
+  previewStartTime: 12.5
+  previewDuration: 3.25
+  previewMode: preview_file
   durationMs: 90000
 timing:
   anchorMs: 0

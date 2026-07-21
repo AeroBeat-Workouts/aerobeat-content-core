@@ -16,6 +16,9 @@ static func run() -> Dictionary:
 		"audio": {
 			"previewFilePath": 123,
 			"previewUrl": "",
+			"previewStartTime": "12.5",
+			"previewDuration": false,
+			"previewMode": "derive_it_later",
 		}
 	}))
 	var passed: bool = (
@@ -23,9 +26,15 @@ static func run() -> Dictionary:
 		and normalized_audio.get("previewFilePath", "") == "media/audio/splat-demo-preview.ogg"
 		and normalized_audio.get("previewResourcePath", "") == "media/audio/splat-demo-preview.ogg"
 		and normalized_audio.get("previewUrl", "") == "https://cdn.example.invalid/beatsaver/splat-demo-preview.mp3"
+		and is_equal_approx(float(normalized_audio.get("previewStartTime", -1.0)), 12.5)
+		and is_equal_approx(float(normalized_audio.get("previewDuration", -1.0)), 3.25)
+		and normalized_audio.get("previewMode", "") == "preview_file"
 		and invalid_codes == [
 			"song_audio_field_invalid_type",
 			"song_audio_field_invalid_type",
+			"song_audio_field_invalid_type",
+			"song_audio_field_invalid_type",
+			"song_audio_invalid_preview_mode",
 		]
 	)
 	return {

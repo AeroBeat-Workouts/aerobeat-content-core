@@ -10,6 +10,15 @@ const AUDIO_OPTIONAL_STRING_FIELDS := [
 	"previewFilePath",
 	"previewUrl",
 ]
+const AUDIO_OPTIONAL_NUMBER_FIELDS := [
+	"previewStartTime",
+	"previewDuration",
+]
+const VALID_PREVIEW_MODES := [
+	"song_file_clip",
+	"preview_file",
+	"preview_url",
+]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	var missing: Array[String] = []
@@ -37,6 +46,21 @@ static func validate_audio_shape(data: Dictionary) -> Array[Dictionary]:
 				"code": "song_audio_field_invalid_type",
 				"message": "Song audio field '%s' must be a non-empty string when present." % field,
 				"field": "audio.%s" % field,
+			})
+	for field in AUDIO_OPTIONAL_NUMBER_FIELDS:
+		if audio.has(field) and not _is_number(audio.get(field)):
+			issues.append({
+				"code": "song_audio_field_invalid_type",
+				"message": "Song audio field '%s' must be a number when present." % field,
+				"field": "audio.%s" % field,
+			})
+	if audio.has("previewMode"):
+		var preview_mode := String(audio.get("previewMode", ""))
+		if preview_mode.is_empty() or not (preview_mode in VALID_PREVIEW_MODES):
+			issues.append({
+				"code": "song_audio_invalid_preview_mode",
+				"message": "Song audio previewMode must be one of song_file_clip/preview_file/preview_url when present.",
+				"field": "audio.previewMode",
 			})
 	return issues
 
@@ -178,6 +202,9 @@ static func _validate_time_signature_segments(timing: Dictionary) -> Array[Dicti
 
 static func _is_integer_number(value: Variant) -> bool:
 	return value is int or (value is float and floor(value) == value)
+
+static func _is_number(value: Variant) -> bool:
+	return value is int or value is float
 
 static func _is_non_empty_string(value: Variant) -> bool:
 	return value is String and not String(value).strip_edges().is_empty()
