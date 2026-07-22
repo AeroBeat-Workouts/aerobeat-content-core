@@ -7,7 +7,7 @@ static func run() -> Dictionary:
 	var validator := ContentPackageValidator.new()
 	var valid_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/song_package_yaml_valid_splat_with_preview_audio")
 	var valid_result := validator.validate_song_package_yaml_package(valid_fixture_path)
-	var loaded := validator._load_song_package_yaml_package_data(valid_fixture_path, "song-package.yaml")
+	var loaded := validator._load_song_package_yaml_package_data(valid_fixture_path, "song.package.yaml")
 	var loaded_songs: Array = loaded.get("package_data", {}).get("songs", [])
 	var normalized_audio: Dictionary = {}
 	if not loaded_songs.is_empty():

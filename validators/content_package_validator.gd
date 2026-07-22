@@ -1,11 +1,11 @@
 class_name ContentPackageValidator
 extends RefCounted
 
-# Canonical authored package truth now lives in song-package.yaml-centered YAML docs.
+# Canonical authored package truth now lives in song.package.yaml-centered YAML docs.
 # Legacy manifest.json fixtures still exist for isolated compatibility coverage, but
 # the default imported-player contract is now the simpler song-package model: one
-# song root, many exact chart/set slices, with no required package-local coaching
-# or environment ownership. The older workout.yaml root alias is retired.
+# embedded root song, many exact root charts[] slices, with no required package-local
+# coaching or environment ownership. The older workout.yaml root alias is retired.
 const AeroContentSchema = preload("res://addons/aerobeat-content-core/globals/aero_content_schema.gd")
 const ContentDifficulty = preload("res://addons/aerobeat-content-core/globals/content_difficulty.gd")
 const ContentId = preload("res://addons/aerobeat-content-core/data_types/content_id.gd")
@@ -22,32 +22,32 @@ const CoachConfig = preload("res://addons/aerobeat-content-core/data_types/coach
 const EnvironmentRecord = preload("res://addons/aerobeat-content-core/data_types/environment.gd")
 const SimpleYamlParser = preload("res://addons/aerobeat-content-core/validators/simple_yaml_parser.gd")
 
-func validate_fixture_package(package_dir: String) -> ContentValidationResult:
-	if FileAccess.file_exists(package_dir.path_join("song-package.yaml")):
+func validate_fixture_package(package_dir: String) -> Object:
+	if FileAccess.file_exists(package_dir.path_join("song.package.yaml")):
 		return validate_song_package_yaml_package(package_dir)
 	if FileAccess.file_exists(package_dir.path_join("workout.yaml")):
-		var retired_result := ContentValidationResult.new()
+		var retired_result: Variant = ContentValidationResult.new()
 		retired_result.add_issue(ContentValidationIssue.create(
 			"retired_workout_yaml_root",
 			ContentValidationIssue.SEVERITY_ERROR,
-			"workout.yaml is retired. Rename the package root to song-package.yaml.",
+			"workout.yaml is retired. Rename the package root to song.package.yaml.",
 			package_dir.path_join("workout.yaml")
 		))
 		return retired_result
 	return validate_legacy_manifest_fixture_package(package_dir)
 
-func validate_song_package_yaml_package(package_dir: String) -> ContentValidationResult:
-	var package_result := _load_song_package_yaml_package_data(package_dir, "song-package.yaml")
-	var load_result: ContentValidationResult = package_result.get("result", ContentValidationResult.new())
+func validate_song_package_yaml_package(package_dir: String) -> Object:
+	var package_result: Dictionary = _load_song_package_yaml_package_data(package_dir, "song.package.yaml")
+	var load_result: Variant = package_result.get("result", ContentValidationResult.new())
 	if not load_result.is_valid():
 		return load_result
 	return validate_song_package_data(package_result.get("package_data", {}))
 
-func validate_legacy_manifest_fixture_package(package_dir: String) -> ContentValidationResult:
+func validate_legacy_manifest_fixture_package(package_dir: String) -> Object:
 	var manifest_path := package_dir.path_join("manifest.json")
 	var manifest := _load_json(manifest_path)
 	if manifest.is_empty():
-		var missing_result := ContentValidationResult.new()
+		var missing_result: Variant = ContentValidationResult.new()
 		missing_result.add_issue(ContentValidationIssue.create(
 			"manifest_missing",
 			ContentValidationIssue.SEVERITY_ERROR,
@@ -66,8 +66,8 @@ func validate_legacy_manifest_fixture_package(package_dir: String) -> ContentVal
 	}
 	return validate_legacy_package_data(package_data)
 
-func validate_song_package_data(package_data: Dictionary) -> ContentValidationResult:
-	var result := ContentValidationResult.new()
+func validate_song_package_data(package_data: Dictionary) -> Object:
+	var result: Variant = ContentValidationResult.new()
 	_validate_records(package_data.get("song_packages", []), SongPackage, "song_package", result)
 	_validate_records(package_data.get("songs", []), Song, "song", result)
 	_validate_records(package_data.get("charts", []), Chart, "chart", result)
@@ -75,8 +75,8 @@ func validate_song_package_data(package_data: Dictionary) -> ContentValidationRe
 	_validate_song_package_references(package_data, result)
 	return result
 
-func validate_legacy_package_data(package_data: Dictionary) -> ContentValidationResult:
-	var result := ContentValidationResult.new()
+func validate_legacy_package_data(package_data: Dictionary) -> Object:
+	var result: Variant = ContentValidationResult.new()
 	var manifest: Dictionary = package_data.get("manifest", {})
 	_validate_manifest(manifest, result)
 	_validate_records(package_data.get("songs", []), Song, "song", result)
@@ -89,14 +89,14 @@ func validate_legacy_package_data(package_data: Dictionary) -> ContentValidation
 	return result
 
 func _load_song_package_yaml_package_data(package_dir: String, root_file_name: String) -> Dictionary:
-	var result := ContentValidationResult.new()
+	var result: Variant = ContentValidationResult.new()
 	var root_path := package_dir.path_join(root_file_name)
 	var root_record := _load_yaml(root_path)
 	if root_record.is_empty():
 		result.add_issue(ContentValidationIssue.create(
 			"song_package_yaml_missing",
 			ContentValidationIssue.SEVERITY_ERROR,
-			"Canonical song-package.yaml package could not be loaded.",
+			"Canonical song.package.yaml package could not be loaded.",
 			root_path
 		))
 		return {"result": result, "package_data": {}}
@@ -105,9 +105,9 @@ func _load_song_package_yaml_package_data(package_dir: String, root_file_name: S
 		"result": result,
 		"package_data": {
 			"song_packages": [{"path": root_file_name, "data": song_package}],
-			"songs": _load_yaml_records_from_dir(package_dir, "songs"),
-			"charts": _load_yaml_records_from_dir(package_dir, "charts"),
-			"sets": _load_yaml_records_from_dir(package_dir, "sets"),
+			"songs": _root_song_records(song_package),
+			"charts": _load_yaml_chart_records_from_root(package_dir, song_package),
+			"sets": _derive_sets_from_root(song_package),
 		}
 	}
 
@@ -141,9 +141,67 @@ func _load_yaml_records_from_dir(package_dir: String, relative_dir: String) -> A
 		})
 	return records
 
+
+func _root_song_records(song_package: Dictionary) -> Array[Dictionary]:
+	var song_record: Dictionary = Dictionary(song_package.get("song", {})).duplicate(true)
+	if song_record.is_empty():
+		return []
+	return [{"path": "song.package.yaml#song", "data": song_record}]
+
+func _load_yaml_chart_records_from_root(package_dir: String, song_package: Dictionary) -> Array[Dictionary]:
+	var records: Array[Dictionary] = []
+	for descriptor_variant in song_package.get("charts", []):
+		if not (descriptor_variant is Dictionary):
+			continue
+		var descriptor := Dictionary(descriptor_variant)
+		var relative_path := String(descriptor.get("path", "")).strip_edges()
+		if relative_path.is_empty():
+			continue
+		var absolute_path := package_dir.path_join(relative_path)
+		records.append({
+			"path": relative_path,
+			"data": _normalize_yaml_record(_load_yaml(absolute_path), "chart"),
+		})
+	return records
+
+func _derive_sets_from_root(song_package: Dictionary) -> Array[Dictionary]:
+	var sets: Array[Dictionary] = []
+	var song: Dictionary = Dictionary(song_package.get("song", {})).duplicate(true)
+	var song_id := String(song.get("songId", "")).strip_edges()
+	var index := 0
+	for descriptor_variant in song_package.get("charts", []):
+		if not (descriptor_variant is Dictionary):
+			continue
+		var descriptor := Dictionary(descriptor_variant)
+		sets.append({
+			"path": "song.package.yaml#charts[%d]" % index,
+			"data": {
+				"schema": AeroContentSchema.SET_V1,
+				"setId": String(descriptor.get("setId", "")).strip_edges(),
+				"setName": String(descriptor.get("setName", "")).strip_edges(),
+				"songId": song_id,
+				"chartId": String(descriptor.get("chartId", "")).strip_edges(),
+			},
+		})
+		index += 1
+	return sets
+
 func _normalize_root_song_package_record(record: Dictionary) -> Dictionary:
 	var normalized := record.duplicate(true)
 	normalized["schema"] = AeroContentSchema.SONG_PACKAGE_V1
+	if normalized.get("song") is Dictionary:
+		normalized["song"] = _normalize_yaml_record(Dictionary(normalized.get("song", {})), "song")
+	var normalized_chart_descriptors: Array = []
+	for entry in normalized.get("charts", []):
+		if not (entry is Dictionary):
+			continue
+		var descriptor := Dictionary(entry).duplicate(true)
+		descriptor["setId"] = String(descriptor.get("setId", "")).strip_edges()
+		descriptor["setName"] = String(descriptor.get("setName", "")).strip_edges()
+		descriptor["chartId"] = String(descriptor.get("chartId", "")).strip_edges()
+		descriptor["path"] = String(descriptor.get("path", "")).strip_edges()
+		normalized_chart_descriptors.append(descriptor)
+	normalized["charts"] = normalized_chart_descriptors
 	return normalized
 
 func _normalize_yaml_record(record: Dictionary, kind: String) -> Dictionary:
@@ -200,7 +258,7 @@ func _yaml_dir_kind(relative_dir: String) -> String:
 		_:
 			return relative_dir
 
-func _validate_manifest(manifest: Dictionary, result: ContentValidationResult) -> void:
+func _validate_manifest(manifest: Dictionary, result) -> void:
 	for field in ContentPackageManifest.validate_shape(manifest):
 		result.add_issue(ContentValidationIssue.create(
 			"manifest_missing_field",
@@ -231,7 +289,7 @@ func _validate_manifest(manifest: Dictionary, result: ContentValidationResult) -
 			"manifest.packageId"
 		))
 
-func _validate_records(records: Array, contract_script: GDScript, kind: String, result: ContentValidationResult, enforce_current_contract: bool = true) -> void:
+func _validate_records(records: Array, contract_script: GDScript, kind: String, result, enforce_current_contract: bool = true) -> void:
 	var seen_ids: Dictionary = {}
 	for record in records:
 		var data: Dictionary = record.get("data", {})
@@ -360,7 +418,7 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 					_issue_reference(issue)
 				))
 
-func _validate_song_package_references(package_data: Dictionary, result: ContentValidationResult) -> void:
+func _validate_song_package_references(package_data: Dictionary, result) -> void:
 	var songs_by_id := _index_records(package_data.get("songs", []), "songId")
 	var charts_by_id := _index_records(package_data.get("charts", []), "chartId")
 	var sets_by_id := _index_records(package_data.get("sets", []), "setId")
@@ -371,7 +429,7 @@ func _validate_song_package_references(package_data: Dictionary, result: Content
 			result.add_issue(ContentValidationIssue.create(
 				"missing_song_ref",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"Set references a songId that is not present in the package.",
+				"Root charts[] descriptor references a songId that is not present in the package.",
 				set_path,
 				{"songId": set_data.get("songId", "")}
 			))
@@ -379,42 +437,60 @@ func _validate_song_package_references(package_data: Dictionary, result: Content
 			result.add_issue(ContentValidationIssue.create(
 				"missing_chart_ref",
 				ContentValidationIssue.SEVERITY_ERROR,
-				"Set references a chartId that is not present in the package.",
+				"Root charts[] descriptor references a chartId that is not present in the package.",
 				set_path,
 				{"chartId": set_data.get("chartId", "")}
 			))
+	var referenced_chart_ids: Dictionary = {}
 	for package_record in package_data.get("song_packages", []):
 		var song_package: Dictionary = package_record.get("data", {})
 		var package_path := String(package_record.get("path", ""))
-		var set_ids_value: Variant = song_package.get("setIds", [])
-		if not (set_ids_value is Array):
+		var chart_entries: Variant = song_package.get("charts", [])
+		if not (chart_entries is Array):
 			continue
 		var seen_set_ids: Dictionary = {}
-		for index in range(set_ids_value.size()):
-			var set_id := String(set_ids_value[index])
-			var set_path := "%s#setIds[%d]" % [package_path, index]
-			if set_id.is_empty():
+		for index in range(chart_entries.size()):
+			if not (chart_entries[index] is Dictionary):
 				continue
-			if seen_set_ids.has(set_id):
-				result.add_issue(ContentValidationIssue.create(
-					"duplicate_song_package_set_id",
-					ContentValidationIssue.SEVERITY_ERROR,
-					"Song package setIds contains duplicate set id '%s'." % set_id,
-					set_path,
-					{"setId": set_id}
-				))
-			else:
-				seen_set_ids[set_id] = index
-			if not sets_by_id.has(set_id):
-				result.add_issue(ContentValidationIssue.create(
-					"missing_set_ref",
-					ContentValidationIssue.SEVERITY_ERROR,
-					"Song package setIds references a setId that is not present in the package.",
-					set_path,
-					{"setId": set_id}
-				))
+			var descriptor := Dictionary(chart_entries[index])
+			var set_id := String(descriptor.get("setId", "")).strip_edges()
+			var chart_id := String(descriptor.get("chartId", "")).strip_edges()
+			var descriptor_path := "%s#charts[%d]" % [package_path, index]
+			if not set_id.is_empty():
+				if seen_set_ids.has(set_id):
+					result.add_issue(ContentValidationIssue.create(
+						"duplicate_song_package_set_id",
+						ContentValidationIssue.SEVERITY_ERROR,
+						"Root charts contains duplicate set id '%s'." % set_id,
+						descriptor_path,
+						{"setId": set_id}
+					))
+				else:
+					seen_set_ids[set_id] = index
+				if not sets_by_id.has(set_id):
+					result.add_issue(ContentValidationIssue.create(
+						"missing_set_ref",
+						ContentValidationIssue.SEVERITY_ERROR,
+						"Root charts references a setId that is not present in the package.",
+						descriptor_path,
+						{"setId": set_id}
+					))
+			if not chart_id.is_empty():
+				referenced_chart_ids[chart_id] = true
+	for chart_record in package_data.get("charts", []):
+		var chart_data: Dictionary = chart_record.get("data", {})
+		var chart_id := String(chart_data.get("chartId", "")).strip_edges()
+		var chart_path := String(chart_record.get("path", ""))
+		if not chart_id.is_empty() and not referenced_chart_ids.has(chart_id):
+			result.add_issue(ContentValidationIssue.create(
+				"orphan_chart_record",
+				ContentValidationIssue.SEVERITY_ERROR,
+				"Chart file is present on disk but is not referenced from root charts[].",
+				chart_path,
+				{"chartId": chart_id}
+			))
 
-func _validate_legacy_references(package_data: Dictionary, result: ContentValidationResult) -> void:
+func _validate_legacy_references(package_data: Dictionary, result) -> void:
 	var songs_by_id := _index_records(package_data.get("songs", []), "songId")
 	var charts_by_id := _index_records(package_data.get("charts", []), "chartId")
 	var sets_by_id := _index_records(package_data.get("sets", []), "setId")
@@ -493,7 +569,7 @@ func _validate_legacy_references(package_data: Dictionary, result: ContentValida
 			var set_data: Dictionary = sets_by_id[set_id].get("data", {})
 			_validate_coaching_overlay_reference(set_data, coach_config, set_path, result)
 
-func _validate_coaching_overlay_reference(set_data: Dictionary, coach_config: Dictionary, path: String, result: ContentValidationResult) -> void:
+func _validate_coaching_overlay_reference(set_data: Dictionary, coach_config: Dictionary, path: String, result) -> void:
 	if coach_config.is_empty():
 		return
 	var enabled := bool(coach_config.get("enabled", false))
@@ -516,7 +592,7 @@ func _validate_coaching_overlay_reference(set_data: Dictionary, coach_config: Di
 			path
 		))
 		return
-	var overlays_by_id := CoachConfig.overlay_audio_index(coach_config)
+	var overlays_by_id: Dictionary = CoachConfig.overlay_audio_index(coach_config)
 	if not overlays_by_id.has(overlay_id):
 		result.add_issue(ContentValidationIssue.create(
 			"missing_coaching_overlay_ref",
@@ -547,7 +623,7 @@ func _load_json(path: String) -> Dictionary:
 	return parsed
 
 func _load_yaml(path: String) -> Dictionary:
-	var parser := SimpleYamlParser.new()
+	var parser = SimpleYamlParser.new()
 	var parsed: Variant = parser.parse_file(path)
 	if parsed == null or not (parsed is Dictionary):
 		return {}

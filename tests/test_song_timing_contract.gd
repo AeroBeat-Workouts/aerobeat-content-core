@@ -37,7 +37,7 @@ static func run() -> Dictionary:
 			],
 		}
 	}))
-	var passed := (
+	var passed: bool = (
 		missing_fields == ["timing"]
 		and valid_timing_issues.is_empty()
 		and invalid_timing_codes == [

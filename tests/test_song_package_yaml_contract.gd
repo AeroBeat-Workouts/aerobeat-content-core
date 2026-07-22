@@ -21,14 +21,12 @@ static func run() -> Dictionary:
 		and autodetect_result.is_valid()
 		and retired_workout_alias_codes == ["retired_workout_yaml_root"]
 		and invalid_legacy_codes == [
-			"set_forbidden_field",
-			"set_forbidden_field",
 			"song_package_forbidden_field",
 			"song_package_forbidden_field",
 			"song_package_forbidden_field",
 			"song_package_forbidden_field",
 		]
-		and missing_set_codes == ["missing_set_ref"]
+		and missing_set_codes == ["missing_chart_ref", "orphan_chart_record"]
 	)
 	return {
 		"name": "song_package_yaml_contract",

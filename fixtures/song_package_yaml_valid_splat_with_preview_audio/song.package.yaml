@@ -4,8 +4,8 @@ recordVersion: 1
 songPackageId: ab-songpkg-splat-demo
 songPackageName: Splat Demo Song Package
 description: >-
-  Minimal canonical workout.yaml alias fixture retained only to prove the old
-  root filename is rejected.
+  Canonical song.package.yaml fixture covering preview audio metadata on the
+  embedded root song record.
 packageVersion: 1.0.0
 song:
   schemaId: aerobeat.song.v1
@@ -15,6 +15,11 @@ song:
   songName: Splat Demo Song
   audio:
     filePath: media/audio/splat-demo.ogg
+    previewFilePath: media/audio/splat-demo-preview.ogg
+    previewUrl: https://cdn.example.invalid/beatsaver/splat-demo-preview.mp3
+    previewStartTime: 12.5
+    previewDuration: 3.25
+    previewMode: preview_file
     durationMs: 90000
   timing:
     anchorMs: 0

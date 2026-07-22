@@ -10,7 +10,7 @@ static func run() -> Dictionary:
 	for issue in result.issues:
 		issue_codes.append(String(issue.get("code", "")))
 	issue_codes.sort()
-	var passed := (
+	var passed: bool = (
 		not result.is_valid()
 		and issue_codes == ["missing_song_ref"]
 	)

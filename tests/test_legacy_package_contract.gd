@@ -10,7 +10,7 @@ static func run() -> Dictionary:
 	for issue in result.issues:
 		codes.append(String(issue.get("code", "")))
 	codes.sort()
-	var passed := (
+	var passed: bool = (
 		not result.is_valid()
 		and codes == [
 			"manifest_forbidden_field",

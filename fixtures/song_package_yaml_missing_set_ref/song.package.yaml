@@ -4,8 +4,7 @@ recordVersion: 1
 songPackageId: ab-songpkg-splat-demo
 songPackageName: Splat Demo Song Package
 description: >-
-  Minimal canonical workout.yaml alias fixture retained only to prove the old
-  root filename is rejected.
+  Invalid fixture with a missing set reference from the root song package.
 packageVersion: 1.0.0
 song:
   schemaId: aerobeat.song.v1
@@ -27,11 +26,7 @@ song:
         numerator: 4
         denominator: 4
 charts:
-  - setId: ab-set-splat-demo-boxing-normal
-    setName: Splat Demo Boxing Normal
-    chartId: ab-chart-splat-demo-boxing-normal
+  - setId: ab-set-missing
+    setName: Missing Boxing Normal
+    chartId: ab-chart-missing
     path: charts/ab-chart-splat-demo-boxing-normal.yaml
-  - setId: ab-set-splat-demo-boxing-hard
-    setName: Splat Demo Boxing Hard
-    chartId: ab-chart-splat-demo-boxing-hard
-    path: charts/ab-chart-splat-demo-boxing-hard.yaml

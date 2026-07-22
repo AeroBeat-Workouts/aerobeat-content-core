@@ -205,7 +205,7 @@ static func run() -> Dictionary:
 			}
 		]
 	}))
-	var passed := (
+	var passed: bool = (
 		not legacy_fixture_result.is_valid()
 		and legacy_fixture_codes == ["invalid_boxing_type", "invalid_boxing_type", "invalid_boxing_type"]
 		and not boxing_end_fixture_result.is_valid()

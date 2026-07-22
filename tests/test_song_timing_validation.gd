@@ -12,7 +12,7 @@ static func run() -> Dictionary:
 	var invalid_stop_segment_result := validator.validate_fixture_package(invalid_stop_segment_fixture_path)
 	var invalid_bpm_codes := _sorted_codes(invalid_bpm_result.issues)
 	var invalid_stop_segment_codes := _sorted_codes(invalid_stop_segment_result.issues)
-	var passed := (
+	var passed: bool = (
 		valid_result.is_valid()
 		and invalid_bpm_codes == [
 			"song_tempo_segment_missing_field",

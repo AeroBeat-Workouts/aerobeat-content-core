@@ -11,7 +11,7 @@ static func run() -> Dictionary:
 	for issue in result.issues:
 		codes.append(String(issue.get("code", "")))
 	codes.sort()
-	var passed := (
+	var passed: bool = (
 		ContentFeature.ALL == ["boxing", "flow"]
 		and ContentFeature.is_valid("boxing")
 		and ContentFeature.is_valid("flow")

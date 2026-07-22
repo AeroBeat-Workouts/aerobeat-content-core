@@ -4,8 +4,8 @@ recordVersion: 1
 songPackageId: ab-songpkg-splat-demo
 songPackageName: Splat Demo Song Package
 description: >-
-  Minimal canonical workout.yaml alias fixture retained only to prove the old
-  root filename is rejected.
+  Minimal canonical song.package.yaml fixture used to validate the clean-break
+  root song metadata plus root charts[] contract in aerobeat-content-core.
 packageVersion: 1.0.0
 song:
   schemaId: aerobeat.song.v1

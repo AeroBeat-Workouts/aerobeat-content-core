@@ -31,7 +31,7 @@ static func run() -> Dictionary:
 		"type": "splat",
 		"resourcePath": "media/environments/demo.spz",
 	})
-	var passed := (
+	var passed: bool = (
 		EnvironmentRecord.VALID_TYPES == ["image_background", "video_background", "glb_environment", "splat"]
 		and EnvironmentRecord.RECOMMENDED_SPLAT_RESOURCE_SUFFIX == ".compressed.ply"
 		and EnvironmentRecord.SUPPORTED_SPLAT_RESOURCE_SUFFIXES == [".compressed.ply", ".ply", ".splat", ".sog"]
