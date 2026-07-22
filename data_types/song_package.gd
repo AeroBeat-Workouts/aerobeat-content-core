@@ -11,6 +11,7 @@ const FORBIDDEN_FIELDS := [
 	"workoutName",
 	"coachConfigId",
 	"setOrder",
+	"setIds",
 ]
 const REQUIRED_CHART_DESCRIPTOR_FIELDS := ["chartId", "feature", "difficulty", "path"]
 

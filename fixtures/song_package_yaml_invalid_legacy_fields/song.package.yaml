@@ -4,6 +4,8 @@ recordVersion: 1
 songPackageId: ab-songpkg-splat-demo
 songPackageName: Splat Demo Song Package
 description: legacy fields should fail
+setIds:
+  - ab-chart-splat-demo-boxing-normal
 packageVersion: 1.0.0
 songId: ab-song-splat-demo
 songName: Splat Demo Song

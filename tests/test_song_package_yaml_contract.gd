@@ -25,6 +25,7 @@ static func run() -> Dictionary:
 			"song_package_forbidden_field",
 			"song_package_forbidden_field",
 			"song_package_forbidden_field",
+			"song_package_forbidden_field",
 		]
 		and missing_set_codes == ["missing_chart_ref"]
 	)
