@@ -1,9 +1,18 @@
 class_name SongPackage
 extends RefCounted
 
-const REQUIRED_FIELDS := ["schema", "songPackageId", "songPackageName", "packageVersion", "song", "charts"]
-const FORBIDDEN_FIELDS := ["workoutId", "workoutName", "coachConfigId", "setOrder"]
-const REQUIRED_CHART_DESCRIPTOR_FIELDS := ["setId", "setName", "chartId", "path"]
+const REQUIRED_FIELDS := ["schema", "songId", "songName", "packageVersion", "song", "charts"]
+const FORBIDDEN_FIELDS := [
+	"recordVersion",
+	"songPackageId",
+	"songPackageName",
+	"description",
+	"workoutId",
+	"workoutName",
+	"coachConfigId",
+	"setOrder",
+]
+const REQUIRED_CHART_DESCRIPTOR_FIELDS := ["chartId", "feature", "difficulty", "path"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	var missing: Array[String] = []
@@ -18,14 +27,14 @@ static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 		if data.has(field):
 			issues.append({
 				"code": "song_package_forbidden_field",
-				"message": "Song package field '%s' is legacy workout-era contract data and must not be present." % field,
+				"message": "Song package field '%s' is retired from the clean-break manifest contract and must not be present." % field,
 				"field": field,
 			})
 	var song_value: Variant = data.get("song", null)
 	if data.has("song") and not (song_value is Dictionary):
 		issues.append({
 			"code": "song_package_song_invalid_type",
-			"message": "Song package song must be an embedded song dictionary.",
+			"message": "Song package song must be an embedded song details dictionary.",
 			"field": "song",
 		})
 	var charts_value: Variant = data.get("charts", [])

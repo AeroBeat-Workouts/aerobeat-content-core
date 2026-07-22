@@ -1,18 +1,12 @@
 schemaId: aerobeat.song-package.v1
 schemaVersion: 1
-recordVersion: 1
-songPackageId: ab-songpkg-splat-demo
-songPackageName: Splat Demo Song Package
-description: >-
-  Canonical song.package.yaml fixture covering preview audio metadata on the
-  embedded root song record.
 packageVersion: 1.0.0
+songId: ab-song-splat-demo
+songName: Splat Demo Song
+cover:
+  path: media/cover/splat-demo-cover.png
 song:
-  schemaId: aerobeat.song.v1
-  schemaVersion: 1
-  recordVersion: 1
-  songId: ab-song-splat-demo
-  songName: Splat Demo Song
+  durationSec: 90
   audio:
     filePath: media/audio/splat-demo.ogg
     previewFilePath: media/audio/splat-demo-preview.ogg
@@ -32,11 +26,11 @@ song:
         numerator: 4
         denominator: 4
 charts:
-  - setId: ab-set-splat-demo-boxing-normal
-    setName: Splat Demo Boxing Normal
-    chartId: ab-chart-splat-demo-boxing-normal
+  - chartId: ab-chart-splat-demo-boxing-normal
+    feature: boxing
+    difficulty: Normal
     path: charts/ab-chart-splat-demo-boxing-normal.yaml
-  - setId: ab-set-splat-demo-boxing-hard
-    setName: Splat Demo Boxing Hard
-    chartId: ab-chart-splat-demo-boxing-hard
+  - chartId: ab-chart-splat-demo-boxing-hard
+    feature: boxing
+    difficulty: Hard
     path: charts/ab-chart-splat-demo-boxing-hard.yaml

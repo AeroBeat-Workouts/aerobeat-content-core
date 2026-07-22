@@ -1,17 +1,10 @@
 schemaId: aerobeat.song-package.v1
 schemaVersion: 1
-recordVersion: 1
-songPackageId: ab-songpkg-splat-demo
-songPackageName: Splat Demo Song Package
-description: >-
-  Invalid fixture with a missing set reference from the root song package.
 packageVersion: 1.0.0
+songId: ab-song-splat-demo
+songName: Splat Demo Song
 song:
-  schemaId: aerobeat.song.v1
-  schemaVersion: 1
-  recordVersion: 1
-  songId: ab-song-splat-demo
-  songName: Splat Demo Song
+  durationSec: 90
   audio:
     filePath: media/audio/splat-demo.ogg
     durationMs: 90000
@@ -26,7 +19,7 @@ song:
         numerator: 4
         denominator: 4
 charts:
-  - setId: ab-set-missing
-    setName: Missing Boxing Normal
-    chartId: ab-chart-missing
-    path: charts/ab-chart-splat-demo-boxing-normal.yaml
+  - chartId: ab-chart-missing
+    feature: boxing
+    difficulty: Normal
+    path: charts/ab-chart-missing.yaml

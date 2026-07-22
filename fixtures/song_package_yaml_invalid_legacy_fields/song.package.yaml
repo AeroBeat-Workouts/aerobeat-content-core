@@ -3,20 +3,12 @@ schemaVersion: 1
 recordVersion: 1
 songPackageId: ab-songpkg-splat-demo
 songPackageName: Splat Demo Song Package
-description: >-
-  Invalid fixture that still carries retired workout-era root fields.
+description: legacy fields should fail
 packageVersion: 1.0.0
-workoutId: ab-workout-splat-demo
-workoutName: Splat Demo Workout
-coachConfigId: ab-coach-config-splat-demo
-setOrder:
-  - ab-set-splat-demo-boxing-normal
+songId: ab-song-splat-demo
+songName: Splat Demo Song
 song:
-  schemaId: aerobeat.song.v1
-  schemaVersion: 1
-  recordVersion: 1
-  songId: ab-song-splat-demo
-  songName: Splat Demo Song
+  durationSec: 90
   audio:
     filePath: media/audio/splat-demo.ogg
     durationMs: 90000
@@ -31,7 +23,7 @@ song:
         numerator: 4
         denominator: 4
 charts:
-  - setId: ab-set-splat-demo-boxing-normal
-    setName: Splat Demo Boxing Normal
-    chartId: ab-chart-splat-demo-boxing-normal
+  - chartId: ab-chart-splat-demo-boxing-normal
+    feature: boxing
+    difficulty: Normal
     path: charts/ab-chart-splat-demo-boxing-normal.yaml

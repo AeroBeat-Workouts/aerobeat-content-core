@@ -26,7 +26,7 @@ static func run() -> Dictionary:
 			"song_package_forbidden_field",
 			"song_package_forbidden_field",
 		]
-		and missing_set_codes == ["missing_chart_ref", "orphan_chart_record"]
+		and missing_set_codes == ["missing_chart_ref"]
 	)
 	return {
 		"name": "song_package_yaml_contract",

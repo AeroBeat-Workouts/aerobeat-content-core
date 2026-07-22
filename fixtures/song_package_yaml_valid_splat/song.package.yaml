@@ -1,18 +1,18 @@
 schemaId: aerobeat.song-package.v1
 schemaVersion: 1
-recordVersion: 1
-songPackageId: ab-songpkg-splat-demo
-songPackageName: Splat Demo Song Package
-description: >-
-  Minimal canonical song.package.yaml fixture used to validate the clean-break
-  root song metadata plus root charts[] contract in aerobeat-content-core.
 packageVersion: 1.0.0
+songId: ab-song-splat-demo
+songName: Splat Demo Song
+cover:
+  path: media/cover/splat-demo-cover.png
+artifacts:
+  conversionReport:
+    path: .artifacts/conversion-report.json
+  beatsaver:
+    preservedFiles:
+      - path: .artifacts/beatsaver/source/stage-manifest.json
 song:
-  schemaId: aerobeat.song.v1
-  schemaVersion: 1
-  recordVersion: 1
-  songId: ab-song-splat-demo
-  songName: Splat Demo Song
+  durationSec: 90
   audio:
     filePath: media/audio/splat-demo.ogg
     durationMs: 90000
@@ -27,11 +27,11 @@ song:
         numerator: 4
         denominator: 4
 charts:
-  - setId: ab-set-splat-demo-boxing-normal
-    setName: Splat Demo Boxing Normal
-    chartId: ab-chart-splat-demo-boxing-normal
+  - chartId: ab-chart-splat-demo-boxing-normal
+    feature: boxing
+    difficulty: Normal
     path: charts/ab-chart-splat-demo-boxing-normal.yaml
-  - setId: ab-set-splat-demo-boxing-hard
-    setName: Splat Demo Boxing Hard
-    chartId: ab-chart-splat-demo-boxing-hard
+  - chartId: ab-chart-splat-demo-boxing-hard
+    feature: boxing
+    difficulty: Hard
     path: charts/ab-chart-splat-demo-boxing-hard.yaml
