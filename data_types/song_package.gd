@@ -13,7 +13,7 @@ const FORBIDDEN_FIELDS := [
 	"setOrder",
 	"setIds",
 ]
-const REQUIRED_CHART_DESCRIPTOR_FIELDS := ["chartId", "feature", "difficulty", "path"]
+const REQUIRED_CHART_DESCRIPTOR_FIELDS := ["chartId", "mode", "difficulty", "path"]
 
 static func validate_shape(data: Dictionary) -> Array[String]:
 	var missing: Array[String] = []

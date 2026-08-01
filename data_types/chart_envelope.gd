@@ -5,7 +5,7 @@ const REQUIRED_FIELDS := [
 	"schema",
 	"chartId",
 	"chartName",
-	"feature",
+	"mode",
 	"difficulty",
 	"beats",
 ]

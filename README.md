@@ -76,7 +76,7 @@ Current suite coverage includes:
 - validation of the approved Flow v1 authored object contract for `note`, `burst`, `bomb`, `obstacle`, and `arc`
 - acceptance of the shared song-audio preview contract fields `audio.previewFilePath` (packaged/local preview asset), `audio.previewUrl` (preserved provider/source preview URL truth), `audio.previewStartTime`, `audio.previewDuration`, and the converter-authored `audio.previewMode` playback decision (`song_file_clip` / `preview_file` / `preview_url`)
 - preservation of the frozen first-pass Flow `burst` beat object fields inside that broader contract
-- rejection of non-v1 gameplay features such as Dance and Step
+- rejection of non-v1 gameplay modes such as Dance and Step
 
 ## Repository status
 

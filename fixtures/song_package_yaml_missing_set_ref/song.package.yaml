@@ -20,6 +20,6 @@ song:
         denominator: 4
 charts:
   - chartId: ab-chart-missing
-    feature: boxing
+    mode: boxing
     difficulty: Normal
     path: charts/ab-chart-missing.yaml

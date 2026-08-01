@@ -2,7 +2,7 @@
   "schema": "aerobeat.content.chart.v1",
   "chartId": "chart_demo_boxing_medium",
   "chartName": "Demo Boxing Medium",
-  "feature": "dance",
+  "mode": "dance",
   "difficulty": "Normal",
   "beats": [
     {

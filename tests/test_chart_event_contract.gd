@@ -25,7 +25,7 @@ static func run() -> Dictionary:
 		boxing_end_fixture_codes.append(String(issue.get("code", "")))
 	boxing_end_fixture_codes.sort()
 	var valid_boxing_issues := Chart.validate_contract({
-		"feature": "boxing",
+		"mode": "boxing",
 		"beats": [
 			{
 				"start": 1.0,
@@ -38,7 +38,7 @@ static func run() -> Dictionary:
 		]
 	})
 	var legacy_boxing_codes := _codes_from(Chart.validate_contract({
-		"feature": "boxing",
+		"mode": "boxing",
 		"beats": [
 			{
 				"start": 1.0,
@@ -47,7 +47,7 @@ static func run() -> Dictionary:
 		]
 	}))
 	var stale_boxing_codes := _codes_from(Chart.validate_contract({
-		"feature": "boxing",
+		"mode": "boxing",
 		"beats": [
 			{
 				"start": 1.0,
@@ -56,7 +56,7 @@ static func run() -> Dictionary:
 		]
 	}))
 	var boxing_portal_codes := _codes_from(Chart.validate_contract({
-		"feature": "boxing",
+		"mode": "boxing",
 		"beats": [
 			{
 				"start": 1.0,
@@ -66,7 +66,7 @@ static func run() -> Dictionary:
 		]
 	}))
 	var boxing_end_codes := _codes_from(Chart.validate_contract({
-		"feature": "boxing",
+		"mode": "boxing",
 		"beats": [
 			{
 				"start": 1.0,
@@ -76,7 +76,7 @@ static func run() -> Dictionary:
 		]
 	}))
 	var valid_flow_issues := Chart.validate_contract({
-		"feature": "flow",
+		"mode": "flow",
 		"beats": [
 			{
 				"start": 1.0,
@@ -127,7 +127,7 @@ static func run() -> Dictionary:
 		]
 	})
 	var directionless_note_issues := Chart.validate_contract({
-		"feature": "flow",
+		"mode": "flow",
 		"beats": [
 			{
 				"start": 1.0,
@@ -139,7 +139,7 @@ static func run() -> Dictionary:
 		]
 	})
 	var invalid_flow_codes := _codes_from(Chart.validate_contract({
-		"feature": "flow",
+		"mode": "flow",
 		"beats": [
 			{
 				"start": 1.0,
@@ -187,7 +187,7 @@ static func run() -> Dictionary:
 		]
 	}))
 	var stale_flow_codes := _codes_from(Chart.validate_contract({
-		"feature": "flow",
+		"mode": "flow",
 		"beats": [
 			{
 				"start": 1.0,
@@ -196,7 +196,7 @@ static func run() -> Dictionary:
 		]
 	}))
 	var flow_portal_codes := _codes_from(Chart.validate_contract({
-		"feature": "flow",
+		"mode": "flow",
 		"beats": [
 			{
 				"start": 1.0,

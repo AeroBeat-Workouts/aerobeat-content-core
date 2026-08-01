@@ -3,7 +3,7 @@ schemaVersion: 1
 recordVersion: 1
 chartId: ab-chart-splat-demo-boxing-hard
 chartName: Splat Demo Boxing Hard
-feature: boxing
+mode: boxing
 difficulty: Hard
 beats:
   - start: 1.0

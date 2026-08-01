@@ -9,7 +9,7 @@ extends RefCounted
 const AeroContentSchema = preload("res://addons/aerobeat-content-core/globals/aero_content_schema.gd")
 const ContentDifficulty = preload("res://addons/aerobeat-content-core/globals/content_difficulty.gd")
 const ContentId = preload("res://addons/aerobeat-content-core/data_types/content_id.gd")
-const ContentFeature = preload("res://addons/aerobeat-content-core/globals/content_feature.gd")
+const ContentMode = preload("res://addons/aerobeat-content-core/globals/content_mode.gd")
 const ContentPackageManifest = preload("res://addons/aerobeat-content-core/data_types/content_package_manifest.gd")
 const ContentValidationIssue = preload("res://addons/aerobeat-content-core/validators/content_validation_issue.gd")
 const ContentValidationResult = preload("res://addons/aerobeat-content-core/validators/content_validation_result.gd")
@@ -181,9 +181,9 @@ func _derive_sets_from_root(song_package: Dictionary) -> Array[Dictionary]:
 			continue
 		var descriptor := Dictionary(descriptor_variant)
 		var chart_id := String(descriptor.get("chartId", "")).strip_edges()
-		var feature := String(descriptor.get("feature", "")).strip_edges()
+		var mode := String(descriptor.get("mode", "")).strip_edges()
 		var difficulty := String(descriptor.get("difficulty", "")).strip_edges()
-		var fallback_name := "%s %s %s" % [song_name, difficulty, feature.capitalize()]
+		var fallback_name := "%s %s %s" % [song_name, difficulty, mode.capitalize()]
 		sets.append({
 			"path": "song.package.yaml#charts[%d]" % index,
 			"data": {
@@ -213,7 +213,7 @@ func _normalize_root_song_package_record(record: Dictionary) -> Dictionary:
 			continue
 		var descriptor := Dictionary(entry).duplicate(true)
 		descriptor["chartId"] = String(descriptor.get("chartId", "")).strip_edges()
-		descriptor["feature"] = String(descriptor.get("feature", "")).strip_edges()
+		descriptor["mode"] = String(descriptor.get("mode", "")).strip_edges()
 		descriptor["difficulty"] = String(descriptor.get("difficulty", "")).strip_edges()
 		descriptor["path"] = String(descriptor.get("path", "")).strip_edges()
 		normalized_chart_descriptors.append(descriptor)
@@ -401,11 +401,11 @@ func _validate_records(records: Array, contract_script: GDScript, kind: String, 
 					_path_with_issue_context(path, issue),
 					_issue_reference(issue)
 				))
-			if not ContentFeature.is_valid(String(data.get("feature", ""))):
+			if not ContentMode.is_valid(String(data.get("mode", ""))):
 				result.add_issue(ContentValidationIssue.create(
-					"invalid_feature",
+					"invalid_mode",
 					ContentValidationIssue.SEVERITY_ERROR,
-					"Chart feature must be one of the canonical v1 content features (boxing or flow).",
+					"Chart mode must be one of the canonical v1 content modes (boxing or flow).",
 					path
 				))
 			if not ContentDifficulty.is_valid(String(data.get("difficulty", ""))):
@@ -474,15 +474,15 @@ func _validate_song_package_references(package_data: Dictionary, result) -> void
 			if chart_id.is_empty() or not charts_by_id.has(chart_id):
 				continue
 			var chart_data: Dictionary = Dictionary(charts_by_id.get(chart_id, {}).get("data", {}))
-			var descriptor_feature := String(descriptor.get("feature", "")).strip_edges()
+			var descriptor_mode := String(descriptor.get("mode", "")).strip_edges()
 			var descriptor_difficulty := String(descriptor.get("difficulty", "")).strip_edges()
-			if descriptor_feature != String(chart_data.get("feature", "")).strip_edges():
+			if descriptor_mode != String(chart_data.get("mode", "")).strip_edges():
 				result.add_issue(ContentValidationIssue.create(
-					"chart_descriptor_feature_mismatch",
+					"chart_descriptor_mode_mismatch",
 					ContentValidationIssue.SEVERITY_ERROR,
-					"Root charts[] descriptor feature must match the referenced chart file feature.",
+					"Root charts[] descriptor mode must match the referenced chart file mode.",
 					descriptor_path,
-					{"chartId": chart_id, "feature": descriptor_feature, "chartFeature": chart_data.get("feature", "")}
+					{"chartId": chart_id, "mode": descriptor_mode, "chartMode": chart_data.get("mode", "")}
 				))
 			if descriptor_difficulty != String(chart_data.get("difficulty", "")).strip_edges():
 				result.add_issue(ContentValidationIssue.create(

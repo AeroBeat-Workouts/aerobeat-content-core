@@ -28,10 +28,10 @@ song:
         denominator: 4
 charts:
   - chartId: ab-chart-splat-demo-boxing-normal
-    feature: boxing
+    mode: boxing
     difficulty: Normal
     path: charts/ab-chart-splat-demo-boxing-normal.yaml
   - chartId: ab-chart-splat-demo-boxing-hard
-    feature: boxing
+    mode: boxing
     difficulty: Hard
     path: charts/ab-chart-splat-demo-boxing-hard.yaml

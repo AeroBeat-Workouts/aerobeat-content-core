@@ -3,7 +3,7 @@ extends SceneTree
 const TEST_SCRIPTS := [
 	preload("res://addons/aerobeat-content-core/tests/test_content_manifest_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_content_reference_validation.gd"),
-	preload("res://addons/aerobeat-content-core/tests/test_content_feature_contract.gd"),
+	preload("res://addons/aerobeat-content-core/tests/test_content_mode_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_environment_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_chart_event_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_legacy_package_contract.gd"),

@@ -34,7 +34,7 @@ static func validate_shape(data: Dictionary) -> Array[String]:
 
 static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 	var issues: Array[Dictionary] = []
-	var feature := String(data.get("feature", ""))
+	var mode := String(data.get("mode", ""))
 	var beats_value: Variant = data.get("beats", [])
 	if not (beats_value is Array):
 		issues.append({
@@ -86,7 +86,7 @@ static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 				"message": "Each chart beat must declare a type.",
 			})
 			continue
-		match feature:
+		match mode:
 			"boxing":
 				issues.append_array(_validate_boxing_beat(beat, type, index))
 			"flow":
