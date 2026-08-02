@@ -11,6 +11,7 @@ const TEST_SCRIPTS := [
 	preload("res://addons/aerobeat-content-core/tests/test_song_timing_validation.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_song_preview_audio_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_song_package_yaml_contract.gd"),
+	preload("res://addons/aerobeat-content-core/tests/test_beatsaver_regression_fixtures.gd"),
 ]
 
 func _initialize() -> void:

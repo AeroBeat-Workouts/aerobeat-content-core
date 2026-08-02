@@ -77,6 +77,7 @@ Current suite coverage includes:
 - acceptance of the shared song-audio preview contract fields `audio.previewFilePath` (packaged/local preview asset), `audio.previewUrl` (preserved provider/source preview URL truth), `audio.previewStartTime`, `audio.previewDuration`, and the converter-authored `audio.previewMode` playback decision (`song_file_clip` / `preview_file` / `preview_url`)
 - preservation of the frozen first-pass Flow `burst` beat object fields inside that broader contract
 - rejection of non-v1 gameplay modes such as Dance and Step
+- validation of the approved BeatSaver regression candidate pool as small `song.package.yaml` fixtures that preserve exact BeatSaver IDs, group intent, difficulty role, and current Boxing/Flow chart event shape; these are synthetic contract slices and intentionally omit full BeatSaver map/audio/cover assets
 
 ## Repository status
 
