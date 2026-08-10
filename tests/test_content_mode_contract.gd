@@ -1,10 +1,10 @@
 extends RefCounted
 
 const ContentMode = preload("res://addons/aerobeat-content-core/globals/content_mode.gd")
-const ContentPackageValidator = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
+const ContentPackageValidatorScript = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
 
 static func run() -> Dictionary:
-	var validator := ContentPackageValidator.new()
+	var validator := ContentPackageValidatorScript.new()
 	var fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_chart_mode_dance")
 	var result := validator.validate_fixture_package(fixture_path)
 	var codes: Array[String] = []

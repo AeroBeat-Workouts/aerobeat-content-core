@@ -1,7 +1,7 @@
 extends RefCounted
 
 const Chart = preload("res://addons/aerobeat-content-core/data_types/chart.gd")
-const ContentPackageValidator = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
+const ContentPackageValidatorScript = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
 
 static func _codes_from(issues: Array) -> Array[String]:
 	var codes: Array[String] = []
@@ -11,7 +11,7 @@ static func _codes_from(issues: Array) -> Array[String]:
 	return codes
 
 static func run() -> Dictionary:
-	var validator := ContentPackageValidator.new()
+	var validator := ContentPackageValidatorScript.new()
 	var legacy_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_boxing_legacy_chart_vocab")
 	var legacy_fixture_result := validator.validate_fixture_package(legacy_fixture_path)
 	var legacy_fixture_codes: Array[String] = []

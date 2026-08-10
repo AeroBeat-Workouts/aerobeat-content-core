@@ -1,7 +1,7 @@
 extends RefCounted
 
-const ContentPackageValidator = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
-const SimpleYamlParser = preload("res://addons/aerobeat-content-core/validators/simple_yaml_parser.gd")
+const ContentPackageValidatorScript = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
+const SimpleYamlParserScript = preload("res://addons/aerobeat-content-core/validators/simple_yaml_parser.gd")
 
 const CASES := [
 	{"id": "29be2", "group": "Sonic Songs - Heavy Metal / Rock", "difficulty_role": "Very fast upper-end speed references", "mode": "flow", "difficulty": "ExpertPlus"},
@@ -21,8 +21,8 @@ const CASES := [
 ]
 
 static func run() -> Dictionary:
-	var validator := ContentPackageValidator.new()
-	var parser := SimpleYamlParser.new()
+	var validator := ContentPackageValidatorScript.new()
+	var parser := SimpleYamlParserScript.new()
 	var fixture_root := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/beatsaver_regression_pool")
 	var invalid_cases: Array = []
 	var seen_ids: Dictionary = {}

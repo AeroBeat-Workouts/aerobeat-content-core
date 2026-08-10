@@ -20,7 +20,7 @@ const ContentSet = preload("res://addons/aerobeat-content-core/data_types/conten
 const Workout = preload("res://addons/aerobeat-content-core/data_types/workout.gd")
 const CoachConfig = preload("res://addons/aerobeat-content-core/data_types/coach_config.gd")
 const EnvironmentRecord = preload("res://addons/aerobeat-content-core/data_types/environment.gd")
-const SimpleYamlParser = preload("res://addons/aerobeat-content-core/validators/simple_yaml_parser.gd")
+const SimpleYamlParserScript = preload("res://addons/aerobeat-content-core/validators/simple_yaml_parser.gd")
 
 func validate_fixture_package(package_dir: String) -> Object:
 	if FileAccess.file_exists(package_dir.path_join("song.package.yaml")):
@@ -155,7 +155,7 @@ func _root_song_records(song_package: Dictionary) -> Array[Dictionary]:
 
 func _load_yaml_chart_records_from_root(package_dir: String, song_package: Dictionary) -> Array[Dictionary]:
 	var records: Array[Dictionary] = []
-	for descriptor_variant in song_package.get("charts", []):
+	for descriptor_variant: Variant in song_package.get("charts", []):
 		if not (descriptor_variant is Dictionary):
 			continue
 		var descriptor := Dictionary(descriptor_variant)
@@ -176,7 +176,7 @@ func _derive_sets_from_root(song_package: Dictionary) -> Array[Dictionary]:
 	var song_id := String(song_package.get("songId", "")).strip_edges()
 	var song_name := String(song_package.get("songName", "")).strip_edges()
 	var index := 0
-	for descriptor_variant in song_package.get("charts", []):
+	for descriptor_variant: Variant in song_package.get("charts", []):
 		if not (descriptor_variant is Dictionary):
 			continue
 		var descriptor := Dictionary(descriptor_variant)
@@ -638,7 +638,7 @@ func _load_json(path: String) -> Dictionary:
 	return parsed
 
 func _load_yaml(path: String) -> Dictionary:
-	var parser = SimpleYamlParser.new()
+	var parser = SimpleYamlParserScript.new()
 	var parsed: Variant = parser.parse_file(path)
 	if parsed == null or not (parsed is Dictionary):
 		return {}

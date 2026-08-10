@@ -1,9 +1,9 @@
 extends RefCounted
 
-const ContentPackageValidator = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
+const ContentPackageValidatorScript = preload("res://addons/aerobeat-content-core/validators/content_package_validator.gd")
 
 static func run() -> Dictionary:
-	var validator := ContentPackageValidator.new()
+	var validator := ContentPackageValidatorScript.new()
 	var valid_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/package_minimal_boxing")
 	var invalid_bpm_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_song_timing_bpm_shortcut")
 	var invalid_stop_segment_fixture_path := ProjectSettings.globalize_path("res://addons/aerobeat-content-core/fixtures/invalid_song_stop_segment_missing_duration")
