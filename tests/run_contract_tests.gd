@@ -6,6 +6,7 @@ const TEST_SCRIPTS := [
 	preload("res://addons/aerobeat-content-core/tests/test_content_mode_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_environment_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_chart_event_contract.gd"),
+	preload("res://addons/aerobeat-content-core/tests/test_boxing_prototype_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_legacy_package_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_song_timing_contract.gd"),
 	preload("res://addons/aerobeat-content-core/tests/test_song_timing_validation.gd"),

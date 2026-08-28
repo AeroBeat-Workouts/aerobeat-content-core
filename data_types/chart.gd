@@ -2,6 +2,7 @@ class_name Chart
 extends RefCounted
 
 const ChartEnvelope = preload("res://addons/aerobeat-content-core/data_types/chart_envelope.gd")
+const BoxingPrototypeContract = preload("res://addons/aerobeat-content-core/globals/boxing_prototype_contract.gd")
 
 const BOXING_LEGACY_TYPE_REPLACEMENTS := {
 	"jab": "straight_left",
@@ -89,8 +90,12 @@ static func validate_contract(data: Dictionary) -> Array[Dictionary]:
 		match mode:
 			"boxing":
 				issues.append_array(_validate_boxing_beat(beat, type, index))
+				if data.has("prototype") and type in BOXING_ALLOWED_TYPES:
+					issues.append_array(BoxingPrototypeContract.validate_boxing_beat(beat, type, index))
 			"flow":
 				issues.append_array(_validate_flow_beat(beat, type, index))
+	if mode == "boxing":
+		issues.append_array(BoxingPrototypeContract.validate_chart_metadata(data))
 	return issues
 
 static func _validate_boxing_beat(beat: Dictionary, type: String, index: int) -> Array[Dictionary]:

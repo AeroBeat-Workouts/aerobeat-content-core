@@ -9,6 +9,7 @@ const SET_V1: String = "aerobeat.content.set.v1"
 const WORKOUT_V1: String = "aerobeat.content.workout.v1"
 const COACH_CONFIG_V1: String = "aerobeat.content.coach_config.v1"
 const ENVIRONMENT_V1: String = "aerobeat.content.environment.v1"
+const BOXING_PROTOTYPE_V1: String = "aerobeat.boxing.prototype.v1"
 
 const KNOWN_SCHEMAS := {
 	PACKAGE_MANIFEST_V1: true,
@@ -19,6 +20,7 @@ const KNOWN_SCHEMAS := {
 	WORKOUT_V1: true,
 	COACH_CONFIG_V1: true,
 	ENVIRONMENT_V1: true,
+	BOXING_PROTOTYPE_V1: true,
 }
 
 const RECORD_SCHEMAS := {

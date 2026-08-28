@@ -73,6 +73,8 @@ Current suite coverage includes:
 - legacy manifest fixture acceptance/rejection coverage where still needed for compatibility
 - rejection of legacy Boxing strike labels such as `jab`, `cross`, `punch_left`, and `punch_right`
 - rejection of stale portal fields on current Boxing/Flow chart beats
+- validation of optional `aerobeat.boxing.prototype.v1` chart identity/provenance metadata, including canonical `row_family_balanced_height_v1` / `cut_family_source_height_v1` recipe IDs, Semantic/Spatial ruleset IDs, and source/recipe/ruleset/content hashes
+- validation of prototype Boxing event IDs, source lineage, explicit 8×6 punch subcells/directions, 100 ms straight qualification, crossed/adjacent guard targets, and 150 ms instantaneous defensive checkpoints
 - validation of the approved Flow v1 authored object contract for `note`, `burst`, `bomb`, `obstacle`, and `arc`
 - acceptance of the shared song-audio preview contract fields `audio.previewFilePath` (packaged/local preview asset), `audio.previewUrl` (preserved provider/source preview URL truth), `audio.previewStartTime`, `audio.previewDuration`, and the converter-authored `audio.previewMode` playback decision (`song_file_clip` / `preview_file` / `preview_url`)
 - preservation of the frozen first-pass Flow `burst` beat object fields inside that broader contract
