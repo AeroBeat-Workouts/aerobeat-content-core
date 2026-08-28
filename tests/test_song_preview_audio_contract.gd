@@ -19,6 +19,7 @@ static func run() -> Dictionary:
 			"previewStartTime": "12.5",
 			"previewDuration": false,
 			"previewMode": "derive_it_later",
+			"contentHash": "sha256:bad",
 		}
 	}))
 	var invalid_negative_start_result := validator.validate_song_package_data(_mutated_preview_audio_package_data(loaded.get("package_data", {}), {
@@ -46,6 +47,7 @@ static func run() -> Dictionary:
 			"song_audio_field_invalid_type",
 			"song_audio_field_invalid_type",
 			"song_audio_field_invalid_type",
+			"song_audio_invalid_content_hash",
 			"song_audio_invalid_preview_mode",
 		]
 		and invalid_negative_start_codes == [

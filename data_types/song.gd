@@ -9,6 +9,7 @@ const AUDIO_OPTIONAL_STRING_FIELDS := [
 	"previewResourcePath",
 	"previewFilePath",
 	"previewUrl",
+	"contentHash",
 ]
 const AUDIO_OPTIONAL_NUMBER_FIELDS := [
 	"previewStartTime",
@@ -54,6 +55,12 @@ static func validate_audio_shape(data: Dictionary) -> Array[Dictionary]:
 				"message": "Song audio field '%s' must be a number when present." % field,
 				"field": "audio.%s" % field,
 			})
+	if audio.has("contentHash") and not _is_sha256_hash(audio.get("contentHash")):
+		issues.append({
+			"code": "song_audio_invalid_content_hash",
+			"message": "Song audio contentHash must use sha256 plus 64 lowercase hexadecimal digits when present.",
+			"field": "audio.contentHash",
+		})
 	issues.append_array(_validate_preview_timing_ranges(audio))
 	if audio.has("previewMode"):
 		var preview_mode := String(audio.get("previewMode", ""))
@@ -220,6 +227,17 @@ static func _validate_preview_timing_ranges(audio: Dictionary) -> Array[Dictiona
 				"field": "audio.previewDuration",
 			})
 	return issues
+
+static func _is_sha256_hash(value: Variant) -> bool:
+	if not (value is String):
+		return false
+	var text := String(value)
+	if not text.begins_with("sha256:") or text.length() != 71:
+		return false
+	for character in text.substr(7):
+		if not String(character) in "0123456789abcdef":
+			return false
+	return true
 
 static func _is_integer_number(value: Variant) -> bool:
 	return value is int or (value is float and floor(value) == value)
